@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Fiadex.Tests/Fiadex.Tests.csproj" />
+  <Project Path="Fiadex/Fiadex.csproj" />
+</Solution>
