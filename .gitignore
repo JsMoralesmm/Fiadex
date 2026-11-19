@@ -6,5 +6,6 @@ publish/
 *.db-shm
 *.db-wal
 usuarios.txt
+SUGERENCIAS_MEJORA.md
 *.zip
 !releases/Fiadex-win-x64-portable.zip

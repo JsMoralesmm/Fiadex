@@ -12,7 +12,7 @@ Manuales disponibles en **Markdown** y **PDF**:
 | Técnico | [MANUAL_TECNICO.md](MANUAL_TECNICO.md) | [MANUAL_TECNICO.pdf](Manuales_PDF/MANUAL_TECNICO.pdf) |
 | Despliegue | [MANUAL_DESPLIEGUE.md](MANUAL_DESPLIEGUE.md) | [MANUAL_DESPLIEGUE.pdf](Manuales_PDF/MANUAL_DESPLIEGUE.pdf) |
 
-También puedes consultar [SUGERENCIAS_MEJORA.md](SUGERENCIAS_MEJORA.md) y [SKILLS.md](SKILLS.md) (especificación técnica original).
+También puedes consultar [SKILLS.md](SKILLS.md) (especificación técnica original).
 
 ## Descarga portable (Release)
 
