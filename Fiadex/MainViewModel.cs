@@ -284,16 +284,7 @@ public partial class MainViewModel : ObservableValidator
 
     private void ApplyPersonFilter()
     {
-        var term = PersonSearch?.Trim();
-        IEnumerable<Person> filtered = _allPeople;
-        if (!string.IsNullOrWhiteSpace(term))
-        {
-            filtered = filtered.Where(x =>
-                x.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                (x.Phone?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false));
-        }
-
-        var rows = filtered.ToList();
+        var rows = PersonSearchFilter.Filter(_allPeople, PersonSearch).ToList();
         FilteredPeople = new ObservableCollection<Person>(rows);
         PersonResultText = rows.Count == 1 ? "1 resultado" : $"{rows.Count} resultados";
 
@@ -305,16 +296,7 @@ public partial class MainViewModel : ObservableValidator
 
     private void ApplyHistoryClientFilter()
     {
-        var term = HistoryClientSearch?.Trim();
-        IEnumerable<Person> filtered = _allHistoryClients;
-        if (!string.IsNullOrWhiteSpace(term))
-        {
-            filtered = filtered.Where(x =>
-                x.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                (x.Phone?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false));
-        }
-
-        var rows = filtered.ToList();
+        var rows = PersonSearchFilter.Filter(_allHistoryClients, HistoryClientSearch).ToList();
         HistoryClients = new ObservableCollection<Person>(rows);
         HistoryClientResultText = rows.Count == 1 ? "1 cliente" : $"{rows.Count} clientes";
 

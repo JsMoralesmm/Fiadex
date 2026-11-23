@@ -813,9 +813,11 @@
                                     <TextBlock Text="Asigna un préstamo o fiado a un cliente" FontSize="11.5" Foreground="{DynamicResource MonochromeMutedBrush}" Margin="0,2,0,16"/>
 
                                     <TextBlock Text="Cliente / Persona" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                                    <ComboBox ItemsSource="{Binding People}" DisplayMemberPath="Name"
-                                              SelectedItem="{Binding SelectedPerson}" Margin="0,4,0,12"
-                                              AutomationProperties.Name="Persona"/>
+                                    <local:PersonPicker ItemsSource="{Binding People}"
+                                                        SelectedItem="{Binding SelectedPerson}"
+                                                        PlaceholderText="Buscar cliente por nombre o teléfono"
+                                                        Margin="0,4,0,12"
+                                                        AutomationProperties.Name="Persona del préstamo"/>
 
                                     <TextBlock Text="Monto a prestar" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <TextBox Text="{Binding LoanAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True}"
@@ -896,32 +898,10 @@
 
                         <!-- Selector de cliente -->
                         <Border Grid.Row="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,0,14" Padding="14,10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="300"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0"
-                                         Text="{Binding HistoryClientSearch, UpdateSourceTrigger=PropertyChanged}"
-                                         Height="36"
-                                         AutomationProperties.Name="Buscar cliente en historial"/>
-                                <ComboBox Grid.Column="1"
-                                          ItemsSource="{Binding HistoryClients}"
-                                          DisplayMemberPath="Name"
-                                          SelectedItem="{Binding HistorySelectedPerson}"
-                                          Height="36" Margin="12,0,0,0"
-                                          AutomationProperties.Name="Cliente seleccionado en historial"/>
-                                <TextBlock Grid.Column="2" Text="{Binding HistoryClientResultText}"
-                                           VerticalAlignment="Center" Margin="12,0,0,0"
-                                           Foreground="{DynamicResource MonochromeSecondaryBrush}" FontSize="12"/>
-                                <Button Grid.Column="3" Content="Limpiar"
-                                        Command="{Binding ClearHistoryClientSearchCommand}"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Width="80" Height="36" Margin="12,0,0,0"
-                                        AutomationProperties.Name="Limpiar búsqueda de clientes en historial"/>
-                            </Grid>
+                            <local:PersonPicker ItemsSource="{Binding HistoryClients}"
+                                                SelectedItem="{Binding HistorySelectedPerson}"
+                                                PlaceholderText="Buscar cliente para consultar su historial"
+                                                AutomationProperties.Name="Cliente seleccionado en historial"/>
                         </Border>
 
                         <!-- Resumen del cliente seleccionado -->
