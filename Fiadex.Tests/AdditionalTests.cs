@@ -150,6 +150,81 @@ public class ChatToolTests
         }
     }
 
+    [Fact]
+    public async Task AskAsync_WhenOllamaIsUnreachable_ExplainsHowToStartIt()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"fiadex-{Guid.NewGuid():N}.db");
+        try
+        {
+            var database = new FiadexDatabase(path);
+            database.Initialize();
+            using var httpClient = new HttpClient(new ThrowingHandler())
+            {
+                BaseAddress = new Uri("http://localhost:11434/")
+            };
+            var chat = new ChatService(database, httpClient);
+
+            var answer = await chat.AskAsync("¿Cuál es el saldo?");
+
+            Assert.Contains("no está disponible", answer);
+            Assert.Contains("ollama serve", answer);
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task AskAsync_WhenModelIsMissing_ExplainsHowToPullIt()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"fiadex-{Guid.NewGuid():N}.db");
+        try
+        {
+            var database = new FiadexDatabase(path);
+            database.Initialize();
+            using var httpClient = new HttpClient(new StatusHandler(HttpStatusCode.NotFound))
+            {
+                BaseAddress = new Uri("http://localhost:11434/")
+            };
+            var chat = new ChatService(database, httpClient, model: "qwen2.5:3b");
+
+            var answer = await chat.AskAsync("¿Cuál es el saldo?");
+
+            Assert.Contains("no está instalado", answer);
+            Assert.Contains("ollama pull qwen2.5:3b", answer);
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            File.Delete(path);
+        }
+    }
+
+    private sealed class ThrowingHandler : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken) =>
+            throw new HttpRequestException("No se pudo conectar.");
+    }
+
+    private sealed class StatusHandler : HttpMessageHandler
+    {
+        private readonly HttpStatusCode _statusCode;
+
+        public StatusHandler(HttpStatusCode statusCode) => _statusCode = statusCode;
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken) =>
+            Task.FromResult(new HttpResponseMessage(_statusCode)
+            {
+                Content = new StringContent("model not found", Encoding.UTF8, "application/json")
+            });
+    }
+
     private sealed class QueueHandler : HttpMessageHandler
     {
         private readonly Queue<string> _responses;

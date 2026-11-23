@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -9,22 +10,32 @@ namespace Fiadex;
 public sealed class ChatService
 {
     private const int MaxToolRounds = 2;
+    private const string TimeoutMessage =
+        "La consulta tardó demasiado tiempo. Si es la primera vez, Ollama puede estar cargando el modelo; intente de nuevo.";
+
+    private static readonly string DefaultModel =
+        Environment.GetEnvironmentVariable("FIADDEX_OLLAMA_MODEL") ?? "qwen2.5:3b";
+
+    private static readonly string DefaultBaseUrl =
+        Environment.GetEnvironmentVariable("FIADDEX_OLLAMA_URL") ?? "http://localhost:11434";
 
     private readonly IFiadexDatabase _database;
     private readonly HttpClient _httpClient;
     private readonly string _model;
+    private readonly string _baseUrl;
     private readonly List<(string Role, string Text)> _history = [];
 
     public ChatService(
         IFiadexDatabase database,
         HttpClient? httpClient = null,
-        string model = "qwen2.5:3b",
-        string baseUrl = "http://localhost:11434")
+        string? model = null,
+        string? baseUrl = null)
     {
         _database = database;
         _httpClient = httpClient ?? new HttpClient();
-        _httpClient.BaseAddress ??= new Uri(baseUrl.TrimEnd('/') + "/");
-        _model = model;
+        _baseUrl = (baseUrl ?? DefaultBaseUrl).TrimEnd('/');
+        _httpClient.BaseAddress ??= new Uri(_baseUrl + "/");
+        _model = model ?? DefaultModel;
     }
 
     public async Task<string> AskAsync(string question, CancellationToken cancellationToken = default)
@@ -38,13 +49,17 @@ public sealed class ChatService
             _history.Add(("assistant", answer));
             return answer;
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException ex)
         {
-            return "Ollama no está disponible. Instale Ollama, ejecute el servicio y configure qwen2.5:3b.";
+            return ex.Message;
+        }
+        catch (JsonException)
+        {
+            return "Ollama devolvió una respuesta inesperada.";
         }
         catch (TaskCanceledException)
         {
-            return "La consulta tardó demasiado tiempo.";
+            return TimeoutMessage;
         }
     }
 
@@ -59,13 +74,17 @@ public sealed class ChatService
             _history.Add(("assistant", answer));
             return answer;
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException ex)
         {
-            return "Ollama no está disponible. Instale Ollama y configure el modelo local.";
+            return ex.Message;
+        }
+        catch (JsonException)
+        {
+            return "Ollama devolvió una respuesta inesperada.";
         }
         catch (TaskCanceledException)
         {
-            return "La consulta tardó demasiado tiempo.";
+            return TimeoutMessage;
         }
     }
 
@@ -180,38 +199,71 @@ public sealed class ChatService
         bool useTools,
         CancellationToken cancellationToken)
     {
-        using var response = await _httpClient.PostAsJsonAsync(
-            "api/chat",
-            new
+        HttpResponseMessage response;
+        try
+        {
+            response = await _httpClient.PostAsJsonAsync(
+                "api/chat",
+                new
+                {
+                    model = _model,
+                    stream = false,
+                    messages,
+                    tools = useTools ? BuildToolDefinitions() : null
+                },
+                cancellationToken);
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new HttpRequestException(
+                $"Ollama no está disponible en {_baseUrl}. " +
+                "Inicie Ollama (icono en la bandeja del sistema) o ejecute 'ollama serve'.",
+                ex);
+        }
+
+        using (response)
+        {
+            if (!response.IsSuccessStatusCode)
             {
-                model = _model,
-                stream = false,
-                messages,
-                tools = useTools ? BuildToolDefinitions() : null
-            },
-            cancellationToken);
+                var detail = (await response.Content.ReadAsStringAsync(cancellationToken)).Trim();
+                if (detail.Length > 240)
+                {
+                    detail = detail[..240];
+                }
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException("Ollama no pudo responder.");
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new HttpRequestException(
+                        $"El modelo '{_model}' no está instalado en Ollama. " +
+                        $"Ejecute: ollama pull {_model}");
+                }
+
+                var errorMessage = $"Ollama devolvió {(int)response.StatusCode} {response.ReasonPhrase}.";
+                if (!string.IsNullOrWhiteSpace(detail))
+                {
+                    errorMessage += " " + detail;
+                }
+
+                throw new HttpRequestException(errorMessage);
+            }
+
+            using var document = JsonDocument.Parse(
+                await response.Content.ReadAsStringAsync(cancellationToken));
+            var message = document.RootElement.GetProperty("message");
+            var content = message.TryGetProperty("content", out var text)
+                ? text.GetString() ?? string.Empty
+                : string.Empty;
+            JsonElement? toolCalls = null;
+            if (useTools &&
+                message.TryGetProperty("tool_calls", out var calls) &&
+                calls.ValueKind == JsonValueKind.Array &&
+                calls.GetArrayLength() > 0)
+            {
+                toolCalls = calls.Clone();
+            }
+
+            return new OllamaReply(content.Trim(), toolCalls);
         }
-
-        using var document = JsonDocument.Parse(
-            await response.Content.ReadAsStringAsync(cancellationToken));
-        var message = document.RootElement.GetProperty("message");
-        var content = message.TryGetProperty("content", out var text)
-            ? text.GetString() ?? string.Empty
-            : string.Empty;
-        JsonElement? toolCalls = null;
-        if (useTools &&
-            message.TryGetProperty("tool_calls", out var calls) &&
-            calls.ValueKind == JsonValueKind.Array &&
-            calls.GetArrayLength() > 0)
-        {
-            toolCalls = calls.Clone();
-        }
-
-        return new OllamaReply(content.Trim(), toolCalls);
     }
 
     private string ExecuteTool(string name, JsonElement arguments)
