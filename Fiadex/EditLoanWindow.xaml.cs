@@ -11,6 +11,7 @@ public partial class EditLoanWindow : Window
     public EditLoanWindow(IFiadexDatabase database, LoanSummary summary)
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
         _database = database;
         _summary = summary;
         AmountBox.Text = summary.Loan.Amount.ToString("0.##");

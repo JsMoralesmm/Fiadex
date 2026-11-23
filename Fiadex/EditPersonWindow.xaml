@@ -1,15 +1,15 @@
-<Window x:Class="Fiadex.EditPersonWindow"
+﻿<Window x:Class="Fiadex.EditPersonWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Fiadex — Editar Persona"
         Height="430" MinHeight="380" Width="430" MinWidth="400"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
-        Background="{StaticResource MonochromeBackgroundBrush}">
+        Background="{DynamicResource MonochromeBackgroundBrush}">
 
     <Border Margin="24"
-            Background="{StaticResource MonochromeSurfaceBrush}"
-            BorderBrush="{StaticResource MonochromeBorderBrush}"
+            Background="{DynamicResource MonochromeSurfaceBrush}"
+            BorderBrush="{DynamicResource MonochromeBorderBrush}"
             BorderThickness="1"
             CornerRadius="10"
             Padding="28,24">
@@ -25,18 +25,18 @@
                           Padding="0,0,4,0">
                 <StackPanel>
                     <TextBlock Text="EDITAR PERSONA" FontSize="11" FontWeight="SemiBold"
-                               Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                               Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                     <TextBlock Text="Modifica el nombre o teléfono del cliente"
-                               FontSize="12" Foreground="{StaticResource MonochromeMutedBrush}" Margin="0,2,0,18"/>
+                               FontSize="12" Foreground="{DynamicResource MonochromeMutedBrush}" Margin="0,2,0,18"/>
 
-                    <TextBlock Text="Nombre completo" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                    <TextBlock Text="Nombre completo" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                     <TextBox x:Name="NameBox" Height="36" Padding="10,6" Margin="0,4,0,12"/>
 
-                    <TextBlock Text="Teléfono" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                    <TextBlock Text="Teléfono" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                     <TextBox x:Name="PhoneBox" Height="36" Padding="10,6" Margin="0,4,0,12"/>
 
                     <TextBlock x:Name="Message" TextWrapping="Wrap"
-                               Foreground="{StaticResource MonochromeTextBrush}"
+                               Foreground="{DynamicResource MonochromeTextBrush}"
                                FontSize="11.5" FontStyle="Italic"
                                Margin="0,0,0,4"/>
                 </StackPanel>
@@ -56,3 +56,4 @@
         </Grid>
     </Border>
 </Window>
+

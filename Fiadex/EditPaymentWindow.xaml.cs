@@ -11,6 +11,7 @@ public partial class EditPaymentWindow : Window
     public EditPaymentWindow(IFiadexDatabase database, Payment payment)
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
         _database = database;
         _payment = payment;
         AmountBox.Text = payment.Amount.ToString("0.##");

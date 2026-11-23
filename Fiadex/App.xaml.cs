@@ -15,6 +15,9 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        AppPreferences.Load();
+        AccessibilityService.Apply();
+
         var login = new LoginWindow();
         login.Show();
     }

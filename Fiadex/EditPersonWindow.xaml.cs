@@ -10,6 +10,7 @@ public partial class EditPersonWindow : Window
     public EditPersonWindow(IFiadexDatabase database, Person person)
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
         _database = database;
         _person = person;
         NameBox.Text = person.Name;

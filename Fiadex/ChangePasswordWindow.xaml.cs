@@ -10,6 +10,7 @@ public partial class ChangePasswordWindow : Window
     public ChangePasswordWindow(IFiadexDatabase database, string username)
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
         _database = database;
         _username = username;
     }

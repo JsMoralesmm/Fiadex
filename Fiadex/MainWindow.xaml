@@ -9,7 +9,7 @@
         Height="730" Width="1180"
         MinHeight="600" MinWidth="920"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource MonochromeBackgroundBrush}">
+        Background="{DynamicResource MonochromeBackgroundBrush}">
 
     <Window.Resources>
         <!-- Icon Geometries -->
@@ -29,6 +29,7 @@
         <Geometry x:Key="IconRefresh">M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z</Geometry>
         <Geometry x:Key="IconKey">M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z</Geometry>
         <Geometry x:Key="IconLogout">M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z</Geometry>
+        <Geometry x:Key="IconAccessibility">M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 5c-1.5 0-2.8.8-3.5 2H5v2h3v6h2v-5h1v5h2v-6h3V9h-3.5A4 4 0 0 0 12 7z</Geometry>
 
         <!-- Sidebar Navigation Item Template -->
         <Style x:Key="SidebarNavItemStyle" TargetType="ListBoxItem">
@@ -36,8 +37,9 @@
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="Margin" Value="0,2"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Foreground" Value="#D4D4D8"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarMutedBrush}"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
@@ -50,12 +52,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ItemBorder" Property="Background" Value="#1F1F24"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource MonochromeSidebarHoverBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarTextBrush}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="ItemBorder" Property="Background" Value="#27272E"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource MonochromeSidebarSelectedBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarTextBrush}"/>
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -77,7 +79,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TglBorder" Property="Background" Value="{StaticResource MonochromeSidebarHoverBrush}"/>
+                                <Setter TargetName="TglBorder" Property="Background" Value="{DynamicResource MonochromeSidebarHoverBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -86,12 +88,13 @@
         </Style>
 
         <Style x:Key="SidebarActionButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#18181D"/>
-            <Setter Property="BorderBrush" Value="#272730"/>
+            <Setter Property="Background" Value="{DynamicResource MonochromeSidebarBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MonochromeSidebarBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="#E4E4E7"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarTextBrush}"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="Padding" Value="10,4"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -107,9 +110,9 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#22222A"/>
-                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#3F3F4E"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource MonochromeSidebarHoverBrush}"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="{DynamicResource MonochromeSidebarSelectedBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarTextBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -128,8 +131,8 @@
         <!-- SIDEBAR (Barra lateral elegante y moderna) -->
         <!-- ========================================== -->
         <Border Grid.Column="0"
-                Background="{StaticResource MonochromeSidebarBrush}"
-                BorderBrush="{StaticResource MonochromeSidebarBorderBrush}"
+                Background="{DynamicResource MonochromeSidebarBrush}"
+                BorderBrush="{DynamicResource MonochromeSidebarBorderBrush}"
                 BorderThickness="0,0,1,0"
                 Padding="12,14"
                 MouseEnter="Sidebar_MouseEnter"
@@ -137,8 +140,8 @@
             <Border.Resources>
                 <!-- Scoped TextBlock style inside the Sidebar: ensures all sidebar text defaults to high-contrast light silver -->
                 <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="#E4E4E7"/>
-                    <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI, -apple-system, sans-serif"/>
+                    <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarTextBrush}"/>
+                    <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
                 </Style>
             </Border.Resources>
             <DockPanel>
@@ -208,12 +211,12 @@
                     </Border>
 
                     <!-- Divider -->
-                    <Border Height="1" Background="{StaticResource MonochromeSidebarBorderBrush}" Margin="0,0,0,10"/>
+                    <Border Height="1" Background="{DynamicResource MonochromeSidebarBorderBrush}" Margin="0,0,0,10"/>
                 </StackPanel>
 
                 <!-- BOTTOM FOOTER: User Profile & Account Actions -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
-                    <Border Height="1" Background="{StaticResource MonochromeSidebarBorderBrush}" Margin="0,0,0,10"/>
+                    <Border Height="1" Background="{DynamicResource MonochromeSidebarBorderBrush}" Margin="0,0,0,10"/>
 
                     <!-- User Info Card (Expanded) -->
                     <Grid Margin="2,0,0,10"
@@ -230,6 +233,27 @@
                             <TextBlock Text="En línea" Foreground="#A1A1AA" FontSize="10.5"/>
                         </StackPanel>
                     </Grid>
+
+                    <!-- Accesibilidad: abre un submenú junto a la barra lateral -->
+                    <Button x:Name="AccessibilityButton"
+                            Style="{StaticResource SidebarActionButtonStyle}"
+                            Click="AccessibilityClick"
+                            HorizontalContentAlignment="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SidebarActionAlignment}}"
+                            Padding="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SidebarActionPadding}}"
+                            ToolTip="Accesibilidad"
+                            AutomationProperties.AutomationId="AccessibilityButton"
+                            AutomationProperties.Name="Abrir opciones de accesibilidad"
+                            Margin="0,0,0,4">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconAccessibility}"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  Stretch="Uniform" Width="12" Height="12"
+                                  Margin="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SidebarActionIconMargin}}"/>
+                            <TextBlock Text="Accesibilidad"
+                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                       Visibility="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InverseBoolToVisibility}}"/>
+                        </StackPanel>
+                    </Button>
 
                     <!-- Account Buttons (visibles también en el menú colapsado) -->
                     <StackPanel>
@@ -428,24 +452,24 @@
 
             <!-- 1. TOP BAR (Barra Superior Minimalista) -->
             <Border Grid.Row="0"
-                    Background="{StaticResource MonochromeSurfaceBrush}"
-                    BorderBrush="{StaticResource MonochromeBorderBrush}"
+                    Background="{DynamicResource MonochromeSurfaceBrush}"
+                    BorderBrush="{DynamicResource MonochromeBorderBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="24,12">
                 <DockPanel>
                     <!-- Left: Breadcrumb / Section Name -->
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
-                        <TextBlock Text="Fiadex" Foreground="{StaticResource MonochromeSecondaryBrush}" FontSize="13" FontWeight="Normal"/>
-                        <TextBlock Text=" / " Foreground="{StaticResource MonochromeMutedBrush}" FontSize="13" Margin="4,0"/>
+                        <TextBlock Text="Fiadex" Foreground="{DynamicResource MonochromeSecondaryBrush}" FontSize="13" FontWeight="Normal"/>
+                        <TextBlock Text=" / " Foreground="{DynamicResource MonochromeMutedBrush}" FontSize="13" Margin="4,0"/>
                         <TextBlock Text="{Binding SelectedItem.Tag, ElementName=Navigation, TargetNullValue=Dashboard, FallbackValue=Dashboard}"
-                                   Foreground="{StaticResource MonochromeTextBrush}"
+                                   Foreground="{DynamicResource MonochromeTextBrush}"
                                    FontSize="13.5" FontWeight="SemiBold"/>
                     </StackPanel>
 
                     <!-- Right: Section Selector ComboBox & Status Pill -->
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Sección" VerticalAlignment="Center" Margin="0,0,8,0"
-                                   FontSize="12" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                   FontSize="12" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                         <ComboBox x:Name="HeaderModuleSelector"
                                   Width="160" Height="34" Margin="0"
                                   ItemsSource="{Binding Sections}"
@@ -453,10 +477,10 @@
                                   SelectionChanged="HeaderModuleSelector_SelectionChanged"
                                   AutomationProperties.Name="Seleccionar módulo"
                                   ToolTip="Cambiar de módulo rápidamente"/>
-                        <Border Margin="12,0,0,0" Padding="8,4" Background="{StaticResource MonochromeSurfaceAltBrush}" CornerRadius="12">
+                        <Border Margin="12,0,0,0" Padding="8,4" Background="{DynamicResource MonochromeSurfaceAltBrush}" CornerRadius="12">
                             <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="6" Height="6" Fill="{StaticResource MonochromePrimaryBrush}" Margin="0,0,6,0"/>
-                                <TextBlock Text="Local" FontSize="11" Foreground="{StaticResource MonochromeSecondaryBrush}" FontWeight="Medium"/>
+                                <Ellipse Width="6" Height="6" Fill="{DynamicResource MonochromePrimaryBrush}" Margin="0,0,6,0"/>
+                                <TextBlock Text="Local" FontSize="11" Foreground="{DynamicResource MonochromeSecondaryBrush}" FontWeight="Medium"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -466,19 +490,19 @@
             <!-- 2. NOTIFICATION BANNER (Monocromático, elegante) -->
             <Border Grid.Row="1"
                     Padding="16,10"
-                    Background="{StaticResource MonochromePrimaryBrush}"
-                    BorderBrush="{StaticResource MonochromeBorderStrongBrush}"
+                    Background="{DynamicResource MonochromePrimaryBrush}"
+                    BorderBrush="{DynamicResource MonochromeBorderStrongBrush}"
                     BorderThickness="0,0,0,1"
                     Visibility="{Binding BannerMessage, Converter={StaticResource StringToVisibility}}">
                 <DockPanel>
                     <Button Content="Cerrar" DockPanel.Dock="Right"
                             Style="{StaticResource GhostButtonStyle}"
-                            Foreground="White"
+                            Foreground="{DynamicResource MonochromeOnPrimaryBrush}"
                             MinHeight="26" Padding="10,2"
                             Command="{Binding ClearBannerCommand}"
                             AutomationProperties.Name="Cerrar aviso"/>
                     <TextBlock Text="{Binding BannerMessage}"
-                               Foreground="White"
+                               Foreground="{DynamicResource MonochromeOnPrimaryBrush}"
                                FontSize="12.5"
                                TextWrapping="Wrap"
                                VerticalAlignment="Center"
@@ -502,8 +526,8 @@
                             <!-- Section Title -->
                             <DockPanel Margin="0,0,0,16">
                                 <StackPanel DockPanel.Dock="Left">
-                                    <TextBlock Text="Resumen Financiero" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}"/>
-                                    <TextBlock Text="Indicadores clave de saldo, abonos y actividad de préstamos" FontSize="12" Foreground="{StaticResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="Resumen Financiero" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}"/>
+                                    <TextBlock Text="Indicadores clave de saldo, abonos y actividad de préstamos" FontSize="12" Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                                 <Button Content="Actualizar datos"
                                         Command="{Binding RefreshCommand}"
@@ -517,30 +541,30 @@
                             <UniformGrid Columns="4" Margin="0,0,0,6">
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="SALDO PENDIENTE" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding PendingTotal, StringFormat=C0}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,6,0,2"/>
-                                        <TextBlock Text="Total por cobrar a clientes" FontSize="11" Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                        <TextBlock Text="SALDO PENDIENTE" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding PendingTotal, StringFormat=C0}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,6,0,2"/>
+                                        <TextBlock Text="Total por cobrar a clientes" FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="ABONOS DEL MES" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding PaymentsThisMonth, StringFormat=C0}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,6,0,2"/>
-                                        <TextBlock Text="Recaudación en el mes vigente" FontSize="11" Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                        <TextBlock Text="ABONOS DEL MES" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding PaymentsThisMonth, StringFormat=C0}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,6,0,2"/>
+                                        <TextBlock Text="Recaudación en el mes vigente" FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="PRÉSTAMOS ACTIVOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding ActiveLoans}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,6,0,2"/>
-                                        <TextBlock Text="Cuentas con saldo mayor a cero" FontSize="11" Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                        <TextBlock Text="PRÉSTAMOS ACTIVOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding ActiveLoans}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,6,0,2"/>
+                                        <TextBlock Text="Cuentas con saldo mayor a cero" FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="ABONOS REGISTRADOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding PaymentCount}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,6,0,2"/>
-                                        <TextBlock Text="Transacciones históricas" FontSize="11" Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                        <TextBlock Text="ABONOS REGISTRADOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding PaymentCount}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,6,0,2"/>
+                                        <TextBlock Text="Transacciones históricas" FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                     </StackPanel>
                                 </Border>
                             </UniformGrid>
@@ -549,20 +573,20 @@
                             <UniformGrid Columns="3" Margin="0,0,0,12">
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="MEDIANA DE PRÉSTAMOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding MedianLoanAmount, StringFormat=C0}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,4,0,0"/>
+                                        <TextBlock Text="MEDIANA DE PRÉSTAMOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding MedianLoanAmount, StringFormat=C0}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,4,0,0"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="ERRORES REGISTRADOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding ErrorCount}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,4,0,0"/>
+                                        <TextBlock Text="ERRORES REGISTRADOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding ErrorCount}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,4,0,0"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource MetricCardStyle}">
                                     <StackPanel>
-                                        <TextBlock Text="CAMPOS INCOMPLETOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding MissingFields}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,4,0,0"/>
+                                        <TextBlock Text="CAMPOS INCOMPLETOS" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding MissingFields}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,4,0,0"/>
                                     </StackPanel>
                                 </Border>
                             </UniformGrid>
@@ -572,7 +596,7 @@
                                 <DockPanel>
                                     <TextBlock Text="FRECUENCIA DE USO POR MÓDULO"
                                                FontSize="10.5" FontWeight="SemiBold"
-                                               Foreground="{StaticResource MonochromeSecondaryBrush}"
+                                               Foreground="{DynamicResource MonochromeSecondaryBrush}"
                                                DockPanel.Dock="Top" Margin="0,0,0,8"/>
                                     <ItemsControl ItemsSource="{Binding ModuleUsage}">
                                         <ItemsControl.ItemsPanel>
@@ -582,16 +606,16 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="{StaticResource MonochromeSurfaceAltBrush}"
-                                                        BorderBrush="{StaticResource MonochromeBorderBrush}"
+                                                <Border Background="{DynamicResource MonochromeSurfaceAltBrush}"
+                                                        BorderBrush="{DynamicResource MonochromeBorderBrush}"
                                                         BorderThickness="1"
                                                         CornerRadius="14"
                                                         Padding="10,4"
                                                         Margin="0,0,8,6">
                                                     <TextBlock FontSize="11.5">
-                                                        <Run Text="{Binding Module}" Foreground="{StaticResource MonochromeTextBrush}" FontWeight="Medium"/>
-                                                        <Run Text=" • " Foreground="{StaticResource MonochromeMutedBrush}"/>
-                                                        <Run Text="{Binding Count}" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                                        <Run Text="{Binding Module}" Foreground="{DynamicResource MonochromeTextBrush}" FontWeight="Medium"/>
+                                                        <Run Text=" • " Foreground="{DynamicResource MonochromeMutedBrush}"/>
+                                                        <Run Text="{Binding Count}" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                                     </TextBlock>
                                                 </Border>
                                             </DataTemplate>
@@ -610,7 +634,7 @@
                                 <!-- Column 0: Bar Chart (Abonos por mes) -->
                                 <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,8,0">
                                     <DockPanel>
-                                        <TextBlock DockPanel.Dock="Top" Text="Abonos por mes" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,0,0,12"/>
+                                        <TextBlock DockPanel.Dock="Top" Text="Abonos por mes" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,0,0,12"/>
                                         <ItemsControl ItemsSource="{Binding MonthlyAnalytics}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -619,23 +643,33 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <DockPanel VerticalAlignment="Bottom" Margin="4,0">
-                                                        <TextBlock DockPanel.Dock="Bottom"
-                                                                   Text="{Binding Label}"
-                                                                   HorizontalAlignment="Center"
-                                                                   FontSize="10"
-                                                                   Foreground="{StaticResource MonochromeSecondaryBrush}"
-                                                                   Margin="0,6,0,0"/>
-                                                        <Border Width="20"
+                                                    <Grid Margin="4,0">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="110"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Border Grid.Row="1"
+                                                                Width="20"
                                                                 Height="{Binding PaymentBarHeight}"
-                                                                Background="{StaticResource MonochromePrimaryBrush}"
+                                                                Background="{DynamicResource MonochromePrimaryBrush}"
                                                                 CornerRadius="4,4,0,0"
                                                                 VerticalAlignment="Bottom">
                                                             <Border.ToolTip>
                                                                 <ToolTip Content="{Binding Payments, StringFormat=C0}"/>
                                                             </Border.ToolTip>
                                                         </Border>
-                                                    </DockPanel>
+                                                        <Border Grid.Row="0"
+                                                                Background="#111113"
+                                                                CornerRadius="3"
+                                                                Padding="3,1"
+                                                                Margin="0,0,0,6"
+                                                                HorizontalAlignment="Center">
+                                                            <TextBlock Text="{Binding Label}"
+                                                                       HorizontalAlignment="Center"
+                                                                       FontSize="10"
+                                                                       Foreground="#FFFFFF"/>
+                                                        </Border>
+                                                    </Grid>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
@@ -645,7 +679,7 @@
                                 <!-- Column 1: Line Chart (Tendencia de abonos) -->
                                 <Border Grid.Column="1" Style="{StaticResource PanelCardStyle}" Margin="8,0,0,0">
                                     <DockPanel>
-                                        <TextBlock DockPanel.Dock="Top" Text="Tendencia de pagos" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}" Margin="0,0,0,12"/>
+                                        <TextBlock DockPanel.Dock="Top" Text="Tendencia de pagos" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,0,0,12"/>
                                         <Canvas x:Name="MonthlyLineChart"
                                                 SizeChanged="MonthlyLineChart_SizeChanged"
                                                 Loaded="MonthlyLineChart_Loaded"/>
@@ -670,7 +704,7 @@
                         <!-- Registration Card -->
                         <Border Grid.Row="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,0,16" Padding="18,14">
                             <StackPanel>
-                                <TextBlock Text="REGISTRAR NUEVA PERSONA" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}" Margin="0,0,0,10"/>
+                                <TextBlock Text="REGISTRAR NUEVA PERSONA" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,0,0,10"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="2*"/>
@@ -678,13 +712,13 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                        <TextBlock Text="Nombre completo" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="Nombre completo" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                         <TextBox Text="{Binding PersonName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True}"
                                                  Margin="0,4,0,0"
                                                  AutomationProperties.Name="Nombre de la persona"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Margin="0,0,12,0">
-                                        <TextBlock Text="Teléfono / Contacto" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                        <TextBlock Text="Teléfono / Contacto" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                         <TextBox Text="{Binding PersonPhone, UpdateSourceTrigger=PropertyChanged}"
                                                  Margin="0,4,0,0"
                                                  AutomationProperties.Name="Teléfono"/>
@@ -708,11 +742,11 @@
                                 </Grid.RowDefinitions>
 
                                 <Border Grid.Row="0" Padding="12,10,12,8"
-                                        BorderBrush="{StaticResource MonochromeBorderLightBrush}"
+                                        BorderBrush="{DynamicResource MonochromeBorderLightBrush}"
                                         BorderThickness="0,0,0,1">
                                     <DockPanel>
                                         <TextBlock DockPanel.Dock="Left" Text="Buscar" FontSize="11.5"
-                                                   Foreground="{StaticResource MonochromeSecondaryBrush}"
+                                                   Foreground="{DynamicResource MonochromeSecondaryBrush}"
                                                    VerticalAlignment="Center" Margin="0,0,8,0"/>
                                         <Button DockPanel.Dock="Right" Content="Limpiar"
                                                 Command="{Binding ClearPersonSearchCommand}"
@@ -721,7 +755,7 @@
                                                 AutomationProperties.Name="Limpiar búsqueda de personas"/>
                                         <TextBlock DockPanel.Dock="Right"
                                                    Text="{Binding PersonResultText}"
-                                                   FontSize="11" Foreground="{StaticResource MonochromeMutedBrush}"
+                                                   FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         <TextBox Height="34" Padding="10,6"
                                                  Text="{Binding PersonSearch, UpdateSourceTrigger=PropertyChanged}"
@@ -744,7 +778,7 @@
                                     <TextBlock Text="No hay personas para mostrar. Ajuste la búsqueda o registre una persona."
                                                Visibility="{Binding FilteredPeople.Count, Converter={StaticResource CountToVisibility}}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
-                                               Foreground="{StaticResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
+                                               Foreground="{DynamicResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -775,24 +809,24 @@
                         <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,16,0">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
-                                    <TextBlock Text="NUEVO PRÉSTAMO" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                    <TextBlock Text="Asigna un préstamo o fiado a un cliente" FontSize="11.5" Foreground="{StaticResource MonochromeMutedBrush}" Margin="0,2,0,16"/>
+                                    <TextBlock Text="NUEVO PRÉSTAMO" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Asigna un préstamo o fiado a un cliente" FontSize="11.5" Foreground="{DynamicResource MonochromeMutedBrush}" Margin="0,2,0,16"/>
 
-                                    <TextBlock Text="Cliente / Persona" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Cliente / Persona" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <ComboBox ItemsSource="{Binding People}" DisplayMemberPath="Name"
                                               SelectedItem="{Binding SelectedPerson}" Margin="0,4,0,12"
                                               AutomationProperties.Name="Persona"/>
 
-                                    <TextBlock Text="Monto a prestar" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Monto a prestar" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <TextBox Text="{Binding LoanAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True}"
                                              AutomationProperties.Name="Monto del préstamo"/>
 
-                                    <TextBlock Text="Fecha del crédito" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Fecha del crédito" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <DatePicker SelectedDate="{Binding LoanDate}" Margin="0,4,0,12"
                                                 DisplayDateEnd="{Binding LoanMaxDate}"
                                                 AutomationProperties.Name="Fecha del préstamo"/>
 
-                                    <TextBlock Text="Notas u observaciones" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Notas u observaciones" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <TextBox Text="{Binding LoanNotes, UpdateSourceTrigger=PropertyChanged}"
                                              AcceptsReturn="True" Height="70" VerticalContentAlignment="Top"
                                              AutomationProperties.Name="Notas del préstamo"/>
@@ -832,7 +866,7 @@
                                     <TextBlock Text="No hay préstamos registrados. Seleccione una persona a la izquierda para iniciar."
                                                Visibility="{Binding Loans.Count, Converter={StaticResource CountToVisibility}}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
-                                               Foreground="{StaticResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
+                                               Foreground="{DynamicResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
                                 </Grid>
                             </Border>
 
@@ -881,7 +915,7 @@
                                           AutomationProperties.Name="Cliente seleccionado en historial"/>
                                 <TextBlock Grid.Column="2" Text="{Binding HistoryClientResultText}"
                                            VerticalAlignment="Center" Margin="12,0,0,0"
-                                           Foreground="{StaticResource MonochromeSecondaryBrush}" FontSize="12"/>
+                                           Foreground="{DynamicResource MonochromeSecondaryBrush}" FontSize="12"/>
                                 <Button Grid.Column="3" Content="Limpiar"
                                         Command="{Binding ClearHistoryClientSearchCommand}"
                                         Style="{StaticResource SecondaryButtonStyle}"
@@ -905,54 +939,54 @@
 
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="CLIENTE" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySelectedPerson.Name}" FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                         <TextBlock Text="{Binding HistorySelectedPerson.Phone}" FontSize="11.5"
-                                                   Foreground="{StaticResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1">
                                         <TextBlock Text="PRÉSTAMOS" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySummary.LoanCount}" FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="PRESTADO" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySummary.LoanTotal, StringFormat=C0}" FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="3">
                                         <TextBlock Text="PAGADO" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySummary.PaidTotal, StringFormat=C0}" FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="4">
                                         <TextBlock Text="SALDO" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySummary.Balance, StringFormat=C0}" FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="5">
                                         <TextBlock Text="ESTADO" FontSize="10.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeMutedBrush}"/>
+                                                   Foreground="{DynamicResource MonochromeMutedBrush}"/>
                                         <TextBlock Text="{Binding HistorySummary.Balance, Converter={StaticResource BalanceStatus}}"
                                                    FontSize="15" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource MonochromeTextBrush}" Margin="0,3,0,0"/>
+                                                   Foreground="{DynamicResource MonochromeTextBrush}" Margin="0,3,0,0"/>
                                     </StackPanel>
                                 </Grid>
 
                                 <TextBlock Text="Seleccione un cliente para ver su historial."
                                            Visibility="{Binding HasHistoryClient, Converter={StaticResource InverseBoolToVisibility}}"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           Foreground="{StaticResource MonochromeSecondaryBrush}" FontSize="12.5"/>
+                                           Foreground="{DynamicResource MonochromeSecondaryBrush}" FontSize="12.5"/>
                             </Grid>
                         </Border>
 
@@ -976,7 +1010,7 @@
                                 <TextBlock Text="El cliente seleccionado aún no tiene préstamos registrados."
                                            Visibility="{Binding HistoryLoans.Count, Converter={StaticResource CountToVisibility}}"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
-                                           Foreground="{StaticResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
+                                           Foreground="{DynamicResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
                             </Grid>
                         </Border>
 
@@ -998,7 +1032,7 @@
                                 <TextBlock Text="El cliente seleccionado aún no tiene abonos registrados."
                                            Visibility="{Binding HistoryPayments.Count, Converter={StaticResource CountToVisibility}}"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
-                                           Foreground="{StaticResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
+                                           Foreground="{DynamicResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
                             </Grid>
                         </Border>
                     </Grid>
@@ -1018,35 +1052,35 @@
                         <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,16,0">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
-                                    <TextBlock Text="REGISTRAR ABONO" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                    <TextBlock Text="Registra un pago parcial o total a un crédito" FontSize="11.5" Foreground="{StaticResource MonochromeMutedBrush}" Margin="0,2,0,16"/>
+                                    <TextBlock Text="REGISTRAR ABONO" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Registra un pago parcial o total a un crédito" FontSize="11.5" Foreground="{DynamicResource MonochromeMutedBrush}" Margin="0,2,0,16"/>
 
-                                    <TextBlock Text="Préstamo pendiente" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Préstamo pendiente" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <ComboBox ItemsSource="{Binding Loans}"
                                               SelectedItem="{Binding SelectedLoan}" Margin="0,4,0,12">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock>
                                                     <Run Text="{Binding Loan.PersonName}" FontWeight="SemiBold"/>
-                                                    <Run Text=" (Saldo: " Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                                    <Run Text="{Binding Balance, StringFormat=C0, Mode=OneWay}" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
-                                                    <Run Text=")" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                                    <Run Text=" (Saldo: " Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                                    <Run Text="{Binding Balance, StringFormat=C0, Mode=OneWay}" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                                    <Run Text=")" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
 
-                                    <TextBlock Text="Monto abonado" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Monto abonado" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <TextBox Text="{Binding PaymentAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True}"
                                              AutomationProperties.Name="Monto del abono"/>
 
-                                    <TextBlock Text="Fecha del pago" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Fecha del pago" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <DatePicker SelectedDate="{Binding PaymentDate}" Margin="0,4,0,12"
                                                 DisplayDateStart="{Binding PaymentMinDate}"
                                                 DisplayDateEnd="{Binding PaymentMaxDate}"
                                                 AutomationProperties.Name="Fecha del abono"/>
 
-                                    <TextBlock Text="Notas u observaciones" FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                    <TextBlock Text="Notas u observaciones" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                     <TextBox Text="{Binding PaymentNotes, UpdateSourceTrigger=PropertyChanged}"
                                              AcceptsReturn="True" Height="70" VerticalContentAlignment="Top"
                                              AutomationProperties.Name="Notas del abono"/>
@@ -1084,7 +1118,7 @@
                                     <TextBlock Text="No hay abonos registrados todavía. Seleccione un préstamo y registre el primero."
                                                Visibility="{Binding Payments.Count, Converter={StaticResource CountToVisibility}}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
-                                               Foreground="{StaticResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
+                                               Foreground="{DynamicResource MonochromeSecondaryBrush}" IsHitTestVisible="False"/>
                                 </Grid>
                             </Border>
 
@@ -1115,18 +1149,18 @@
                         <Border Grid.Row="0" Style="{StaticResource PanelCardStyle}" Margin="0,0,0,12" Padding="16,12">
                             <DockPanel>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
-                                    <Border Width="34" Height="34" CornerRadius="8" Background="{StaticResource MonochromePrimaryBrush}" Margin="0,0,12,0">
-                                        <Path Data="{StaticResource IconIA}" Fill="White" Stretch="Uniform" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border Width="34" Height="34" CornerRadius="8" Background="{DynamicResource MonochromePrimaryBrush}" Margin="0,0,12,0">
+                                        <Path Data="{StaticResource IconIA}" Fill="{DynamicResource MonochromeOnPrimaryBrush}" Stretch="Uniform" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="Asistente IA" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource MonochromeTextBrush}"/>
-                                            <Border Background="{StaticResource MonochromeSurfaceAltBrush}" CornerRadius="10" Padding="8,2" Margin="10,0,0,0">
-                                                <TextBlock Text="Motor Local" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                                            <TextBlock Text="Asistente IA" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeTextBrush}"/>
+                                            <Border Background="{DynamicResource MonochromeSurfaceAltBrush}" CornerRadius="10" Padding="8,2" Margin="10,0,0,0">
+                                                <TextBlock Text="Motor Local" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                                             </Border>
                                         </StackPanel>
                                         <TextBlock Text="Consulta deudas, saldos y resúmenes de clientes mediante lenguaje natural"
-                                                   FontSize="11.5" Foreground="{StaticResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
+                                                   FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
 
@@ -1137,7 +1171,7 @@
                                             ToolTip="Generar informe resumido con IA"
                                             AutomationProperties.Name="Generar resumen">
                                         <StackPanel Orientation="Horizontal">
-                                            <Path Data="{StaticResource IconDocument}" Fill="{StaticResource MonochromeTextBrush}" Stretch="Uniform" Width="12" Height="12" Margin="0,0,6,0"/>
+                                            <Path Data="{StaticResource IconDocument}" Fill="{DynamicResource MonochromeTextBrush}" Stretch="Uniform" Width="12" Height="12" Margin="0,0,6,0"/>
                                             <TextBlock Text="Generar resumen" FontSize="12"/>
                                         </StackPanel>
                                     </Button>
@@ -1147,7 +1181,7 @@
                                             ToolTip="Borrar historial de la conversación actual"
                                             AutomationProperties.Name="Limpiar conversación">
                                         <StackPanel Orientation="Horizontal">
-                                            <Path Data="{StaticResource IconDelete}" Fill="{StaticResource MonochromeSecondaryBrush}" Stretch="Uniform" Width="12" Height="12" Margin="0,0,6,0"/>
+                                            <Path Data="{StaticResource IconDelete}" Fill="{DynamicResource MonochromeSecondaryBrush}" Stretch="Uniform" Width="12" Height="12" Margin="0,0,6,0"/>
                                             <TextBlock Text="Limpiar chat" FontSize="12"/>
                                         </StackPanel>
                                     </Button>
@@ -1172,7 +1206,7 @@
                                                 <TextBlock Grid.Row="0"
                                                            Text="{Binding Role, Converter={StaticResource RoleToSenderName}}"
                                                            FontSize="10.5" FontWeight="SemiBold"
-                                                           Foreground="{StaticResource MonochromeSecondaryBrush}"
+                                                           Foreground="{DynamicResource MonochromeSecondaryBrush}"
                                                            HorizontalAlignment="{Binding Role, Converter={StaticResource RoleToAlignment}}"
                                                            Margin="4,0,4,3"/>
 
@@ -1225,7 +1259,7 @@
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left"
                                                 Visibility="{Binding ChatIsLoading, Converter={StaticResource BoolToVisibility}}">
                                         <Control Template="{StaticResource SpinnerTemplate}" Width="16" Height="16" Margin="0,0,8,0"/>
-                                        <TextBlock Text="Analizando datos financieros..." FontSize="12" Foreground="{StaticResource MonochromeSecondaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Analizando datos financieros..." FontSize="12" Foreground="{DynamicResource MonochromeSecondaryBrush}" VerticalAlignment="Center"/>
                                     </StackPanel>
 
                                     <!-- Send Button -->
@@ -1236,7 +1270,7 @@
                                             AutomationProperties.Name="Consultar al asistente">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Enviar consulta" FontSize="12" FontWeight="SemiBold"/>
-                                            <Path Data="{StaticResource IconSend}" Fill="White" Stretch="Uniform" Width="11" Height="11" Margin="8,0,0,0"/>
+                                            <Path Data="{StaticResource IconSend}" Fill="{DynamicResource MonochromeOnPrimaryBrush}" Stretch="Uniform" Width="11" Height="11" Margin="8,0,0,0"/>
                                         </StackPanel>
                                     </Button>
                                 </DockPanel>
@@ -1248,25 +1282,139 @@
 
             <!-- 4. BOTTOM STATUS BAR -->
             <Border Grid.Row="3"
-                    Background="{StaticResource MonochromeSurfaceBrush}"
-                    BorderBrush="{StaticResource MonochromeBorderBrush}"
+                    Background="{DynamicResource MonochromeSurfaceBrush}"
+                    BorderBrush="{DynamicResource MonochromeBorderBrush}"
                     BorderThickness="0,1,0,0"
                     Padding="24,7">
                 <DockPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                        <Ellipse Width="6" Height="6" Fill="{StaticResource MonochromePrimaryBrush}" Margin="0,0,8,0"/>
+                        <Ellipse Width="6" Height="6" Fill="{DynamicResource MonochromePrimaryBrush}" Margin="0,0,8,0"/>
                         <TextBlock Text="{Binding StatusMessage}"
-                                   Foreground="{StaticResource MonochromeSecondaryBrush}"
+                                   Foreground="{DynamicResource MonochromeSecondaryBrush}"
                                    FontSize="11.5"
                                    AutomationProperties.Name="Estado"/>
                     </StackPanel>
                     <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right"
                                Text="Fiadex • Sistema Monocromático de Gestión"
-                               Foreground="{StaticResource MonochromeMutedBrush}"
+                               Foreground="{DynamicResource MonochromeMutedBrush}"
                                FontSize="11"/>
                 </DockPanel>
             </Border>
         </Grid>
+
+        <!-- SUBMENÚ DE ACCESIBILIDAD (se abre desde la barra lateral) -->
+        <Popup x:Name="AccessibilityPopup"
+               Placement="Right"
+               PlacementTarget="{Binding ElementName=AccessibilityButton}"
+               StaysOpen="False"
+               PopupAnimation="None"
+               Opened="AccessibilityPopup_Opened">
+            <Border x:Name="AccessibilityPopupBorder"
+                    Background="{DynamicResource MonochromeSurfaceBrush}"
+                    BorderBrush="{DynamicResource MonochromeBorderStrongBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="18"
+                    Width="290"
+                    MaxHeight="520"
+                    PreviewKeyDown="AccessibilityPopup_PreviewKeyDown">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Accesibilidad"
+                               FontSize="15" FontWeight="SemiBold"
+                               Foreground="{DynamicResource MonochromeTextBrush}"
+                               Margin="0,0,0,4"/>
+                    <TextBlock DockPanel.Dock="Top" Text="Los cambios se guardan automáticamente"
+                               FontSize="{DynamicResource FsXs}"
+                               Foreground="{DynamicResource MonochromeMutedBrush}"
+                               TextWrapping="Wrap" Margin="0,0,0,14"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <TextBlock Text="Tamaño de texto" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource FsXs}"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,0,0,2"/>
+                            <ComboBox ItemsSource="{Binding TextSizes, Source={x:Static local:AppPreferences.Current}}"
+                                      SelectedItem="{Binding TextSize, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="TextSizeCombo"
+                                      AutomationProperties.Name="Tamaño de texto"/>
+
+                            <TextBlock Text="Tema" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource FsXs}"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,10,0,2"/>
+                            <ComboBox ItemsSource="{Binding Themes, Source={x:Static local:AppPreferences.Current}}"
+                                      SelectedItem="{Binding Theme, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="ThemeCombo"
+                                      AutomationProperties.Name="Tema monocromático"/>
+
+                            <TextBlock Text="Zoom de interfaz" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource FsXs}"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,10,0,2"/>
+                            <ComboBox ItemsSource="{Binding InterfaceScales, Source={x:Static local:AppPreferences.Current}}"
+                                      SelectedItem="{Binding InterfaceScale, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="InterfaceScaleCombo"
+                                      AutomationProperties.Name="Zoom de interfaz"/>
+
+                            <TextBlock Text="Tipografía" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource FsXs}"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,10,0,2"/>
+                            <ComboBox ItemsSource="{Binding FontChoices, Source={x:Static local:AppPreferences.Current}}"
+                                      SelectedItem="{Binding FontChoice, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="FontChoiceCombo"
+                                      AutomationProperties.Name="Tipografía"/>
+
+                            <TextBlock Text="Nivel de foco" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource FsXs}"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}" Margin="0,10,0,2"/>
+                            <ComboBox ItemsSource="{Binding FocusLevels, Source={x:Static local:AppPreferences.Current}}"
+                                      SelectedItem="{Binding FocusLevel, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="FocusLevelCombo"
+                                      AutomationProperties.Name="Nivel de foco"/>
+
+                            <CheckBox Content="Alto contraste" Margin="0,12,0,0"
+                                      Foreground="{DynamicResource MonochromeTextBrush}"
+                                      IsChecked="{Binding HighContrast, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="HighContrastCheck"
+                                      AutomationProperties.Name="Alto contraste"/>
+                            <CheckBox Content="Reducir movimiento" Margin="0,8,0,0"
+                                      Foreground="{DynamicResource MonochromeTextBrush}"
+                                      IsChecked="{Binding ReduceMotion, Source={x:Static local:AppPreferences.Current}, Mode=TwoWay}"
+                                      AutomationProperties.AutomationId="ReduceMotionCheck"
+                                      AutomationProperties.Name="Reducir movimiento"/>
+
+                            <Border Background="{DynamicResource MonochromeSurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource MonochromeBorderBrush}"
+                                    BorderThickness="1" CornerRadius="6"
+                                    Padding="12" Margin="0,14,0,0"
+                                    AutomationProperties.Name="Vista previa de accesibilidad">
+                                <StackPanel>
+                                    <TextBlock Text="VISTA PREVIA"
+                                               FontSize="{DynamicResource FsXs}"
+                                               Foreground="{DynamicResource MonochromeMutedBrush}"/>
+                                    <TextBlock Text="Préstamo guardado"
+                                               FontSize="{DynamicResource FsBase}"
+                                               Foreground="{DynamicResource MonochromeTextBrush}"
+                                               Margin="0,4,0,0"/>
+                                    <TextBlock Text="Contraseña ••••••••"
+                                               FontSize="{DynamicResource FsXs}"
+                                               Foreground="{DynamicResource MonochromeSecondaryBrush}"
+                                               Margin="0,2,0,8"/>
+                                    <Button Content="Aceptar"
+                                            HorizontalAlignment="Left"
+                                            MinHeight="30" Padding="12,4"
+                                            FontSize="{DynamicResource FsBase}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Button Content="Valores por defecto"
+                                    Click="ResetAccessibilityClick"
+                                    HorizontalAlignment="Stretch"
+                                    MinHeight="32" Margin="0,14,0,0"
+                                    AutomationProperties.AutomationId="ResetAccessibilityButton"
+                                    AutomationProperties.Name="Restablecer accesibilidad"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Popup>
 
         <!-- FLOATING TOAST NOTIFICATIONS (Monocromático, elegante) -->
         <ItemsControl ItemsSource="{Binding Toasts}"
@@ -1283,15 +1431,15 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="{StaticResource MonochromePrimaryBrush}"
-                            BorderBrush="{StaticResource MonochromeBorderStrongBrush}"
+                    <Border Background="{DynamicResource MonochromePrimaryBrush}"
+                            BorderBrush="{DynamicResource MonochromeBorderStrongBrush}"
                             BorderThickness="1"
                             CornerRadius="6"
                             Padding="14,10"
                             Margin="0,0,0,8"
                             MinWidth="240" MaxWidth="380">
                         <TextBlock Text="{Binding Text}"
-                                   Foreground="White"
+                                   Foreground="{DynamicResource MonochromeOnPrimaryBrush}"
                                    FontSize="12"
                                    TextWrapping="Wrap"/>
                     </Border>
@@ -1300,3 +1448,7 @@
         </ItemsControl>
     </Grid>
 </Window>
+
+
+
+

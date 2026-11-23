@@ -9,6 +9,7 @@ public partial class LoginWindow : Window
     public LoginWindow()
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
         _database.Initialize();
 
         if (!_database.HasUser())

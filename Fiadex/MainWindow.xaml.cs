@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -28,6 +29,9 @@ public partial class MainWindow : Window
     public MainWindow(string username = "admin")
     {
         InitializeComponent();
+        AccessibilityService.ApplyToWindow(this);
+        AccessibilityService.ApplyToPopup(AccessibilityPopupBorder);
+        AppPreferences.Current.PropertyChanged += Preferences_PropertyChanged;
         _username = username;
         _database.Initialize();
         DataContext = new MainViewModel(_database);
@@ -40,6 +44,7 @@ public partial class MainWindow : Window
 
         PreviewMouseMove += (_, _) => _session.RegisterActivity();
         PreviewKeyDown += (_, _) => _session.RegisterActivity();
+        PreviewKeyDown += AccessibilityShortcut_PreviewKeyDown;
         _sessionTimer.Tick += (_, _) =>
         {
             if (!_session.IsActive())
@@ -48,6 +53,104 @@ public partial class MainWindow : Window
             }
         };
         _sessionTimer.Start();
+    }
+
+    private void AccessibilityClick(object sender, RoutedEventArgs e) =>
+        AccessibilityPopup.IsOpen = !AccessibilityPopup.IsOpen;
+
+    private void AccessibilityPopup_Opened(object sender, EventArgs e) => RefreshAccessibilityPopup();
+
+    private void AccessibilityPopup_PreviewKeyDown(object sender, KeyEventArgs e) => HandleAccessibilityShortcut(e);
+
+    private void AccessibilityShortcut_PreviewKeyDown(object sender, KeyEventArgs e) => HandleAccessibilityShortcut(e);
+
+    // El contenido del Popup está en otro árbol visual: se refresca al abrirlo
+    // y cuando cambia cualquier preferencia para aplicar zoom, tamaño de texto
+    // y bindings, sin sobrescribir los colores DynamicResource de la vista previa.
+    private void Preferences_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (AccessibilityPopup.IsOpen)
+        {
+            RefreshAccessibilityPopup();
+        }
+    }
+
+    private void RefreshAccessibilityPopup()
+    {
+        AccessibilityService.ApplyToPopup(AccessibilityPopupBorder);
+
+        void RefreshBindings(DependencyObject element)
+        {
+            switch (element)
+            {
+                case ComboBox combo:
+                    combo.GetBindingExpression(Selector.SelectedItemProperty)?.UpdateTarget();
+                    break;
+                case CheckBox check:
+                    check.GetBindingExpression(ToggleButton.IsCheckedProperty)?.UpdateTarget();
+                    break;
+            }
+
+            var count = VisualTreeHelper.GetChildrenCount(element);
+            for (var index = 0; index < count; index++)
+            {
+                RefreshBindings(VisualTreeHelper.GetChild(element, index));
+            }
+        }
+
+        RefreshBindings(AccessibilityPopupBorder);
+    }
+
+    private void ResetAccessibilityClick(object sender, RoutedEventArgs e) =>
+        AppPreferences.Current.Reset();
+
+    private void HandleAccessibilityShortcut(KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape && AccessibilityPopup.IsOpen)
+        {
+            AccessibilityPopup.IsOpen = false;
+            e.Handled = true;
+            return;
+        }
+
+        var modifiers = Keyboard.Modifiers;
+        if ((modifiers & ModifierKeys.Control) == 0 || (modifiers & ModifierKeys.Shift) == 0)
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case Key.A:
+                AccessibilityPopup.IsOpen = !AccessibilityPopup.IsOpen;
+                e.Handled = true;
+                break;
+            case Key.D1:
+            case Key.NumPad1:
+                AppPreferences.Current.SetTheme(0);
+                e.Handled = true;
+                break;
+            case Key.D2:
+            case Key.NumPad2:
+                AppPreferences.Current.SetTheme(1);
+                e.Handled = true;
+                break;
+            case Key.D3:
+            case Key.NumPad3:
+                AppPreferences.Current.SetTheme(2);
+                e.Handled = true;
+                break;
+            case Key.OemPlus:
+            case Key.Add:
+                AppPreferences.Current.StepTextSize(1);
+                e.Handled = true;
+                break;
+            case Key.OemMinus:
+            case Key.Subtract:
+                AppPreferences.Current.StepTextSize(-1);
+                e.Handled = true;
+                break;
+        }
     }
 
     private void ChangePasswordClick(object sender, RoutedEventArgs e)
@@ -206,7 +309,7 @@ public partial class MainWindow : Window
             {
                 Width = 7,
                 Height = 7,
-                Fill = new SolidColorBrush(Color.FromRgb(51, 51, 51)),
+                Fill = (Brush)Application.Current.Resources["MonochromePrimaryBrush"],
                 ToolTip = $"{points[index].Label}: {points[index].Payments:C0}"
             };
             Canvas.SetLeft(ellipse, x - 3.5);
@@ -222,7 +325,7 @@ public partial class MainWindow : Window
                 Y1 = coordinates[index - 1].Y,
                 X2 = coordinates[index].X,
                 Y2 = coordinates[index].Y,
-                Stroke = new SolidColorBrush(Color.FromRgb(51, 51, 51)),
+                Stroke = (Brush)Application.Current.Resources["MonochromePrimaryBrush"],
                 StrokeThickness = 2
             });
         }

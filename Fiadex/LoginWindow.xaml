@@ -1,4 +1,4 @@
-<Window x:Class="Fiadex.LoginWindow"
+﻿<Window x:Class="Fiadex.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Fiadex"
@@ -6,7 +6,7 @@
         Height="540" Width="460"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource MonochromeBackgroundBrush}">
+        Background="{DynamicResource MonochromeBackgroundBrush}">
 
     <Window.Resources>
         <Geometry x:Key="IconLogo">M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5</Geometry>
@@ -15,25 +15,25 @@
     <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24">
         <!-- Main Login Card (Linear / Stripe inspired) -->
         <Border Width="380"
-                Background="{StaticResource MonochromeSurfaceBrush}"
-                BorderBrush="{StaticResource MonochromeBorderBrush}"
+                Background="{DynamicResource MonochromeSurfaceBrush}"
+                BorderBrush="{DynamicResource MonochromeBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="10"
                 Padding="32,36">
             <StackPanel>
                 <!-- Brand Monogram & Title -->
                 <StackPanel HorizontalAlignment="Center" Margin="0,0,0,24">
-                    <Border Width="38" Height="38" CornerRadius="8" Background="{StaticResource MonochromePrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,12">
-                        <Path Data="{StaticResource IconLogo}" Fill="White" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="38" Height="38" CornerRadius="8" Background="{DynamicResource MonochromePrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <Path Data="{StaticResource IconLogo}" Fill="{DynamicResource MonochromeOnPrimaryBrush}" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="FIADEX" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{StaticResource MonochromeTextBrush}"/>
+                    <TextBlock Text="FIADEX" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource MonochromeTextBrush}"/>
                     <TextBlock x:Name="Subtitle" Text="Inicie sesión para acceder al sistema"
-                               FontSize="12" Foreground="{StaticResource MonochromeSecondaryBrush}"
+                               FontSize="12" Foreground="{DynamicResource MonochromeSecondaryBrush}"
                                HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 </StackPanel>
 
                 <!-- Input: Usuario -->
-                <TextBlock Text="Usuario" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                <TextBlock Text="Usuario" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                 <TextBox x:Name="UsernameBox"
                          Height="38"
                          Padding="10,6"
@@ -41,7 +41,7 @@
                          AutomationProperties.Name="Usuario"/>
 
                 <!-- Input: Contraseña -->
-                <TextBlock Text="Contraseña" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource MonochromeSecondaryBrush}"/>
+                <TextBlock Text="Contraseña" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                 <local:PasswordField x:Name="PasswordField"
                                      Height="38"
                                      Margin="0,4,0,8"
@@ -50,7 +50,7 @@
                 <!-- Helper Text -->
                 <TextBlock x:Name="PasswordHelp"
                            TextWrapping="Wrap"
-                           Foreground="{StaticResource MonochromeSecondaryBrush}"
+                           Foreground="{DynamicResource MonochromeSecondaryBrush}"
                            FontSize="11" FontStyle="Italic"
                            Margin="0,0,0,10"
                            Visibility="Collapsed"
@@ -59,7 +59,7 @@
                 <!-- Feedback Message Text -->
                 <TextBlock x:Name="MessageText"
                            TextWrapping="Wrap"
-                           Foreground="{StaticResource MonochromeTextBrush}"
+                           Foreground="{DynamicResource MonochromeTextBrush}"
                            FontSize="11.5"
                            FontWeight="Medium"
                            HorizontalAlignment="Center"
@@ -82,13 +82,14 @@
                         Click="UnlockClick"/>
 
                 <!-- Footer Tag -->
-                <Border Margin="0,24,0,0" Padding="0,12,0,0" BorderBrush="{StaticResource MonochromeBorderLightBrush}" BorderThickness="0,1,0,0">
+                <Border Margin="0,24,0,0" Padding="0,12,0,0" BorderBrush="{DynamicResource MonochromeBorderLightBrush}" BorderThickness="0,1,0,0">
                     <TextBlock Text="Fiadex • Gestión de Cartera y Ventas Fiadas"
                                FontSize="10.5"
-                               Foreground="{StaticResource MonochromeMutedBrush}"
+                               Foreground="{DynamicResource MonochromeMutedBrush}"
                                HorizontalAlignment="Center"/>
                 </Border>
             </StackPanel>
         </Border>
     </Grid>
 </Window>
+
