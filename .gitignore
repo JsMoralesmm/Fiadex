@@ -7,3 +7,7 @@ publish/
 *.db-wal
 usuarios.txt
 *.zip
+
+# Generados localmente; se publican en Releases, no en el repo
+Manuales_PDF/
+releases/

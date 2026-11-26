@@ -59,7 +59,7 @@ Si la contraseña es correcta, el sistema reinicia el contador de intentos y per
 
 El desbloqueo es una función local del equipo; no hay correo ni verificación en dos pasos, y no se puede hacer solo con el botón: **siempre se exige la contraseña**.
 
-> **Si olvidaste la contraseña**, la app no puede recuperarla por seguridad. Pide al administrador del equipo que ejecute la herramienta local de rescate (`Herramientas\RestablecerContrasena.ps1`); restablece la contraseña y desbloquea la cuenta **sin borrar los datos**. El procedimiento está en el *Manual de Despliegue*, apartado «Recuperación de contraseña olvidada» de la sección 9.
+> **Si olvidaste la contraseña**, la app no puede recuperarla por seguridad. Pide al administrador del equipo que ejecute la herramienta local de rescate (se entrega fuera del repositorio, no está en el ZIP); restablece la contraseña y desbloquea la cuenta **sin borrar los datos**. El procedimiento está en el *Manual de Despliegue*, apartado «Recuperación de contraseña olvidada» de la sección 9.
 
 ### 3.4 Cambiar la contraseña
 

@@ -14,7 +14,7 @@ Este manual describe cómo publicar, distribuir, instalar, actualizar, respaldar
 |---|---|
 | ZIP portable | `C:\Users\juans\Desktop\Proyecto\Fiadex\Fiadex-win-x64-portable.zip` |
 | Carpeta publicada | `C:\Users\juans\Desktop\Proyecto\Fiadex\publish\win-x64` |
-| Manuales en PDF | `C:\Users\juans\Desktop\Proyecto\Fiadex\Manuales_PDF` (se copian a `Manuales\` dentro del ZIP) |
+| Manuales en PDF | Se generan desde los `.md` y se incluyen en `Manuales\` dentro del ZIP publicado |
 | Script de generación | `C:\Users\juans\Desktop\Proyecto\Fiadex\publish.ps1` |
 
 Características del ZIP actual:
@@ -249,19 +249,15 @@ sqlite3 "$env:LOCALAPPDATA\Fiadex\fiadex.db" "PRAGMA integrity_check;"
 
 ### Recuperación de contraseña olvidada
 
-Como el desbloqueo exige la contraseña actual, **no hay recuperación desde la propia app** (no hay correo ni 2FA). El administrador del equipo dispone de una herramienta local de rescate:
-
-```text
-C:\Users\juans\Desktop\Proyecto\Fiadex\Herramientas\RestablecerContrasena.ps1
-```
+Como el desbloqueo exige la contraseña actual, **no hay recuperación desde la propia app** (no hay correo ni 2FA). El administrador del equipo dispone de una herramienta local de rescate que **no se publica en este repositorio ni se incluye en el ZIP portable**; se entrega por separado a quien administra el equipo.
 
 Procedimiento:
 
 1. **Cierra Fiadex** (la herramienta lo comprueba al usar la base por defecto).
-2. Abre PowerShell 7 (`pwsh`) en la raíz del proyecto y ejecuta:
+2. Coloca `RestablecerContrasena.ps1` en una carpeta local y ejecútala con PowerShell 7:
 
 ```powershell
-pwsh -File .\Herramientas\RestablecerContrasena.ps1
+pwsh -File .\RestablecerContrasena.ps1
 ```
 
 3. Escribe la nueva contraseña (mínimo 12 caracteres, mayúscula, minúscula, número y símbolo) y confirma con `SI`.
@@ -272,10 +268,10 @@ La herramienta hace una copia de seguridad con sufijo `.recuperacion-<fecha>.bak
 Para pruebas sobre una copia se puede indicar otra base:
 
 ```powershell
-pwsh -File .\Herramientas\RestablecerContrasena.ps1 -DatabasePath "C:\temp\fiadex.db" -NewPassword "ClaveNueva123!" -Force
+pwsh -File .\RestablecerContrasena.ps1 -DatabasePath "C:\temp\fiadex.db" -NewPassword "ClaveNueva123!" -Force
 ```
 
-> Esta herramienta **no se incluye en el ZIP portable**: solo debe estar en manos del administrador del equipo, porque permite cambiar la contraseña a quien tenga acceso a su perfil de Windows.
+> Solo debe estar en manos del administrador del equipo, porque permite cambiar la contraseña a quien tenga acceso a su perfil de Windows.
 
 ---
 

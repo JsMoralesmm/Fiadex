@@ -33,7 +33,6 @@ Fiadex/
 ├── Fiadex.slnx                    Solución
 ├── publish.ps1                    Genera el ZIP portable
 ├── README.md                      Resumen general
-├── SUGERENCIAS_MEJORA.md          backlog de mejoras
 ├── MANUAL_USUARIO.md
 ├── MANUAL_TECNICO.md
 ├── MANUAL_DESPLIEGUE.md
