@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Fiadex.EditPersonWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Fiadex"
         Title="Fiadex — Editar Persona"
         Height="430" MinHeight="380" Width="430" MinWidth="400"
         WindowStartupLocation="CenterOwner"
@@ -32,8 +33,11 @@
                     <TextBlock Text="Nombre completo" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
                     <TextBox x:Name="NameBox" Height="36" Padding="10,6" Margin="0,4,0,12"/>
 
-                    <TextBlock Text="Teléfono" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                    <TextBox x:Name="PhoneBox" Height="36" Padding="10,6" Margin="0,4,0,12"/>
+                    <TextBlock Text="Teléfono (10 dígitos)" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                    <TextBox x:Name="PhoneBox" Height="36" Padding="10,6" Margin="0,4,0,12"
+                             local:PhoneInput.DigitsOnly="True"
+                             AutomationProperties.Name="Teléfono"
+                             AutomationProperties.HelpText="Escriba los 10 dígitos del número colombiano"/>
 
                     <TextBlock x:Name="Message" TextWrapping="Wrap"
                                Foreground="{DynamicResource MonochromeTextBrush}"

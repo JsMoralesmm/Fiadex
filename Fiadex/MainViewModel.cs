@@ -55,7 +55,9 @@ public partial class MainViewModel : ObservableValidator
     [Required(ErrorMessage = "El nombre de la persona es obligatorio.")]
     private string _personName = string.Empty;
 
-    [ObservableProperty] private string _personPhone = string.Empty;
+    [ObservableProperty]
+    [ColombianPhone(ErrorMessage = "El teléfono debe tener 10 dígitos.")]
+    private string _personPhone = string.Empty;
 
     [ObservableProperty] private string _personSearch = string.Empty;
     [ObservableProperty] private string _personResultText = "0 resultados";
@@ -97,18 +99,26 @@ public partial class MainViewModel : ObservableValidator
     private void AddPerson()
     {
         ValidateProperty(PersonName, nameof(PersonName));
+        ValidateProperty(PersonPhone, nameof(PersonPhone));
         if (GetErrors(nameof(PersonName)).Cast<object>().Any())
         {
             Failure("El nombre de la persona es obligatorio.");
             return;
         }
 
+        if (GetErrors(nameof(PersonPhone)).Cast<object>().Any())
+        {
+            Failure("El teléfono debe tener 10 dígitos.");
+            return;
+        }
+
         try
         {
-            _database.AddPerson(PersonName, PersonPhone);
+            _database.AddPerson(PersonName, PhoneNumber.DigitsOnly(PersonPhone));
             PersonName = string.Empty;
             PersonPhone = string.Empty;
             ClearErrors(nameof(PersonName));
+            ClearErrors(nameof(PersonPhone));
             Refresh();
             Success("Persona registrada.");
         }
@@ -250,6 +260,8 @@ public partial class MainViewModel : ObservableValidator
     }
 
     partial void OnPersonSearchChanged(string value) => ApplyPersonFilter();
+
+    partial void OnPersonPhoneChanged(string value) => ClearErrors(nameof(PersonPhone));
 
     partial void OnHistoryClientSearchChanged(string value) => ApplyHistoryClientFilter();
 

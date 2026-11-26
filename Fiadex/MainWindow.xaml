@@ -718,10 +718,12 @@
                                                  AutomationProperties.Name="Nombre de la persona"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Margin="0,0,12,0">
-                                        <TextBlock Text="Teléfono / Contacto" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                                        <TextBox Text="{Binding PersonPhone, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBlock Text="Teléfono (10 dígitos)" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                                        <TextBox Text="{Binding PersonPhone, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True}"
+                                                 local:PhoneInput.DigitsOnly="True"
                                                  Margin="0,4,0,0"
-                                                 AutomationProperties.Name="Teléfono"/>
+                                                 AutomationProperties.Name="Teléfono"
+                                                 AutomationProperties.HelpText="Escriba los 10 dígitos del número colombiano"/>
                                     </StackPanel>
                                     <Button Grid.Column="2"
                                             Content="Registrar persona"

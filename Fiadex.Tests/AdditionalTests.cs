@@ -263,6 +263,7 @@ public class InlineValidationTests
             Assert.Empty(database.GetPeople());
 
             viewModel.PersonName = "Ana";
+            viewModel.PersonPhone = "3001234567";
             viewModel.AddPersonCommand.Execute(null);
             Assert.Single(database.GetPeople());
 
@@ -386,6 +387,7 @@ public class PaymentFeedbackTests
             var viewModel = new MainViewModel(database, new ToastService());
 
             viewModel.PersonName = "María";
+            viewModel.PersonPhone = "3001234567";
             viewModel.AddPersonCommand.Execute(null);
             viewModel.SelectedPerson = viewModel.People.Single();
             viewModel.LoanAmount = 100000;
@@ -452,6 +454,7 @@ public class SingleAccountTests
             var viewModel = new MainViewModel(database, new ToastService());
 
             viewModel.PersonName = "María";
+            viewModel.PersonPhone = "3001234567";
             viewModel.AddPersonCommand.Execute(null);
             viewModel.SelectedPerson = viewModel.People.Single();
 
