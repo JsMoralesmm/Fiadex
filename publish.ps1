@@ -17,9 +17,27 @@ if (Test-Path -LiteralPath $manuals) {
     Copy-Item -Path (Join-Path $manuals "*.pdf") -Destination $manualDestination -Force
 }
 
+# No distribuir símbolos de depuración: facilitan ingeniería inversa y no aportan al usuario.
+Get-ChildItem -LiteralPath $output -Filter "*.pdb" -Recurse -File |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+
 if (Test-Path -LiteralPath $zip) {
     Remove-Item -LiteralPath $zip -Force
 }
 
-Compress-Archive -Path (Join-Path $output "*") -DestinationPath $zip
+# Comprimir desde una copia temporal: así un Fiadex.exe abierto no bloquea
+# los DLL de publish\win-x64 durante la compresión.
+$staging = Join-Path $root "publish\_staging"
+if (Test-Path -LiteralPath $staging) {
+    Remove-Item -LiteralPath $staging -Recurse -Force
+}
+New-Item -ItemType Directory -Path $staging -Force | Out-Null
+Copy-Item -Path (Join-Path $output "*") -Destination $staging -Recurse -Force
+
+try {
+    Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $zip
+} finally {
+    Remove-Item -LiteralPath $staging -Recurse -Force -ErrorAction SilentlyContinue
+}
+
 Write-Host "Paquete portable generado: $zip"

@@ -1,62 +1,60 @@
 ﻿<Window x:Class="Fiadex.EditPaymentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Fiadex — Editar Abono"
-        Height="540" MinHeight="430" Width="430" MinWidth="400"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="CanResize"
-        Background="{DynamicResource MonochromeBackgroundBrush}">
+        Style="{StaticResource ModalWindowStyle}"
+        Title="Editar abono"
+        Height="540" MinHeight="470" Width="470" MinWidth="430"
+        WindowStartupLocation="CenterOwner">
 
-    <Border Margin="24"
-            Background="{DynamicResource MonochromeSurfaceBrush}"
-            BorderBrush="{DynamicResource MonochromeBorderBrush}"
-            BorderThickness="1"
-            CornerRadius="10"
-            Padding="28,24">
-        <Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="0,0,4,0">
+            <StackPanel>
+                <TextBlock Text="Datos del abono" FontSize="17" FontWeight="SemiBold"
+                           Foreground="{DynamicResource MonochromeTextBrush}"/>
+                <TextBlock Text="Ajuste el importe, la fecha o las observaciones."
+                           Style="{StaticResource ModalHintStyle}" Margin="0,4,0,20"/>
+
+                <TextBlock Text="Monto" Style="{StaticResource ModalLabelStyle}"/>
+                <TextBox x:Name="AmountBox" Margin="0,0,0,14"/>
+
+                <TextBlock Text="Fecha del abono" Style="{StaticResource ModalLabelStyle}"/>
+                <DatePicker x:Name="DateBox" Margin="0,0,0,14"/>
+
+                <TextBlock Text="Notas u observaciones" Style="{StaticResource ModalLabelStyle}"/>
+                <TextBox x:Name="NotesBox" Height="82" AcceptsReturn="True"
+                         VerticalContentAlignment="Top" Margin="0,0,0,6"/>
+
+                <TextBlock x:Name="Message" Style="{StaticResource ModalMessageStyle}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1" Margin="0,16,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
-            <ScrollViewer Grid.Row="0"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          Padding="0,0,4,0">
-                <StackPanel>
-                    <TextBlock Text="EDITAR ABONO" FontSize="11" FontWeight="SemiBold"
-                               Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                    <TextBlock Text="Modifica el importe del pago, fecha u observaciones"
-                               FontSize="12" Foreground="{DynamicResource MonochromeMutedBrush}" Margin="0,2,0,18"/>
-
-                    <TextBlock Text="Monto" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                    <TextBox x:Name="AmountBox" Height="36" Padding="10,6" Margin="0,4,0,12"/>
-
-                    <TextBlock Text="Fecha del abono" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                    <DatePicker x:Name="DateBox" Height="36" Margin="0,4,0,12"/>
-
-                    <TextBlock Text="Notas u observaciones" FontSize="11.5" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                    <TextBox x:Name="NotesBox" Height="70" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="10,6" Margin="0,4,0,12"/>
-
-                    <TextBlock x:Name="Message" TextWrapping="Wrap"
-                               Foreground="{DynamicResource MonochromeTextBrush}"
-                               FontSize="11.5" FontStyle="Italic"
-                               Margin="0,0,0,4"/>
-                </StackPanel>
-            </ScrollViewer>
-
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Border Height="1" Background="{DynamicResource MonochromeBorderBrush}" Margin="0,0,0,14"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Cancelar"
                         Style="{StaticResource SecondaryButtonStyle}"
-                        Width="110" Height="38" Margin="0"
+                        Width="110" Height="40" Margin="0"
+                        IsCancel="True"
                         Click="CancelClick"
                         AutomationProperties.Name="Cancelar edición"/>
                 <Button Content="Guardar cambios"
-                        Width="150" Height="38" Margin="8,0,0,0"
+                        Width="150" Height="40" Margin="8,0,0,0"
+                        IsDefault="True"
                         Click="SaveClick"
                         AutomationProperties.Name="Guardar cambios del abono"/>
             </StackPanel>
         </Grid>
-    </Border>
+    </Grid>
 </Window>
-

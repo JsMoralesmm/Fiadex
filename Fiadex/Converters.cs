@@ -163,41 +163,28 @@ public sealed class RoleToAlignmentConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+// Las burbujas toman los pinceles del tema en cada conversión: así siguen
+// siendo monocromáticas y responden al cambio de tema/contraste en caliente.
 public sealed class RoleToBubbleBackgroundConverter : IValueConverter
 {
-    private static readonly SolidColorBrush UserBg = new(Color.FromRgb(24, 24, 27)); // #18181B deep charcoal/black
-    private static readonly SolidColorBrush AssistantBg = new(Color.FromRgb(255, 255, 255)); // #FFFFFF
-
-    static RoleToBubbleBackgroundConverter()
-    {
-        UserBg.Freeze();
-        AssistantBg.Freeze();
-    }
-
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is string role && role.Equals("user", StringComparison.OrdinalIgnoreCase)
-            ? UserBg
-            : AssistantBg;
+            ? AppBrush("MonochromePrimaryBrush")
+            : AppBrush("MonochromeSurfaceAltBrush");
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
         throw new NotSupportedException();
+
+    internal static object AppBrush(string key) =>
+        Application.Current?.Resources[key] ?? Brushes.Transparent;
 }
 
 public sealed class RoleToBubbleForegroundConverter : IValueConverter
 {
-    private static readonly SolidColorBrush UserFg = new(Color.FromRgb(244, 244, 245)); // #F4F4F5
-    private static readonly SolidColorBrush AssistantFg = new(Color.FromRgb(24, 24, 27)); // #18181B
-
-    static RoleToBubbleForegroundConverter()
-    {
-        UserFg.Freeze();
-        AssistantFg.Freeze();
-    }
-
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is string role && role.Equals("user", StringComparison.OrdinalIgnoreCase)
-            ? UserFg
-            : AssistantFg;
+            ? RoleToBubbleBackgroundConverter.AppBrush("MonochromeOnPrimaryBrush")
+            : RoleToBubbleBackgroundConverter.AppBrush("MonochromeTextBrush");
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
         throw new NotSupportedException();
@@ -205,19 +192,10 @@ public sealed class RoleToBubbleForegroundConverter : IValueConverter
 
 public sealed class RoleToBubbleBorderConverter : IValueConverter
 {
-    private static readonly SolidColorBrush UserBorder = new(Color.FromRgb(39, 39, 42)); // #27272A
-    private static readonly SolidColorBrush AssistantBorder = new(Color.FromRgb(228, 228, 231)); // #E4E4E7
-
-    static RoleToBubbleBorderConverter()
-    {
-        UserBorder.Freeze();
-        AssistantBorder.Freeze();
-    }
-
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is string role && role.Equals("user", StringComparison.OrdinalIgnoreCase)
-            ? UserBorder
-            : AssistantBorder;
+            ? RoleToBubbleBackgroundConverter.AppBrush("MonochromePrimaryBrush")
+            : RoleToBubbleBackgroundConverter.AppBrush("MonochromeBorderBrush");
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
         throw new NotSupportedException();
@@ -236,8 +214,8 @@ public sealed class RoleToSenderNameConverter : IValueConverter
 
 public sealed class RoleToCornerRadiusConverter : IValueConverter
 {
-    private static readonly CornerRadius UserRadius = new(14, 14, 2, 14);
-    private static readonly CornerRadius AssistantRadius = new(14, 14, 14, 2);
+    private static readonly CornerRadius UserRadius = new(16, 16, 3, 16);
+    private static readonly CornerRadius AssistantRadius = new(16, 16, 16, 3);
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is string role && role.Equals("user", StringComparison.OrdinalIgnoreCase)
@@ -250,8 +228,8 @@ public sealed class RoleToCornerRadiusConverter : IValueConverter
 
 public sealed class RoleToMarginConverter : IValueConverter
 {
-    private static readonly Thickness UserMargin = new(48, 4, 0, 8);
-    private static readonly Thickness AssistantMargin = new(0, 4, 48, 8);
+    private static readonly Thickness UserMargin = new(40, 4, 0, 10);
+    private static readonly Thickness AssistantMargin = new(0, 4, 40, 10);
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is string role && role.Equals("user", StringComparison.OrdinalIgnoreCase)

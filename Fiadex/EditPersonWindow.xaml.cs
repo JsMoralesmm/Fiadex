@@ -21,6 +21,7 @@ public partial class EditPersonWindow : Window
     {
         try
         {
+            DomainRules.ValidateRequiredText(NameBox.Text, "nombre de la persona");
             _database.UpdatePerson(_person.Id, NameBox.Text, PhoneBox.Text);
             DialogResult = true;
         }

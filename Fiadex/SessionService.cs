@@ -29,9 +29,10 @@ public sealed class SessionService
         }
 
         var now = _now();
-        _authenticatedAt = now;
         _lastActivityAt = now;
     }
+
+    public TimeSpan InactiveFor => _now() - _lastActivityAt;
 
     public bool IsActive()
     {

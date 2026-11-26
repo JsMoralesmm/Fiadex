@@ -1,6 +1,6 @@
 # Manual de Usuario — Fiadex
 
-**Versión 1.0 — 19/11/2026**
+**Versión 1.1 — 25/11/2026**
 
 ## 1. Introducción
 
@@ -39,7 +39,7 @@ Este manual está dirigido al usuario que administra la cartera: alta de cliente
 
 1. Escribe tu **Usuario**.
 2. Escribe tu **Contraseña**.
-3. Pulsa **Iniciar sesión**.
+3. Pulsa **Iniciar sesión** o simplemente **Enter** desde cualquiera de los dos campos.
 
 El campo de contraseña tiene un **icono de ojo** a la derecha:
 
@@ -49,13 +49,17 @@ El campo de contraseña tiene un **icono de ojo** a la derecha:
 
 ### 3.3 Contraseña olvidada o cuenta bloqueada
 
-Después de **5 intentos fallidos**, la cuenta se bloquea. En la pantalla de acceso aparece el botón **Desbloquear cuenta**:
+Después de **5 intentos fallidos**, la cuenta se bloquea. El botón **Desbloquear cuenta** aparece solo si el usuario existe y está realmente bloqueado (un error de contraseña normal no lo muestra):
 
-1. Pulsa **Desbloquear cuenta**.
-2. Confirma la recuperación como administrador local.
-3. El sistema reinicia el contador de intentos y permite volver a entrar.
+1. Escribe tu **Usuario**.
+2. Escribe tu **Contraseña actual** en el campo de contraseña.
+3. Pulsa **Desbloquear cuenta**.
 
-El desbloqueo es una función local del equipo; no hay correo ni verificación en dos pasos.
+Si la contraseña es correcta, el sistema reinicia el contador de intentos y permite volver a entrar; de lo contrario verás *“No se pudo desbloquear. Verifique el usuario y la contraseña.”*
+
+El desbloqueo es una función local del equipo; no hay correo ni verificación en dos pasos, y no se puede hacer solo con el botón: **siempre se exige la contraseña**.
+
+> **Si olvidaste la contraseña**, la app no puede recuperarla por seguridad. Pide al administrador del equipo que ejecute la herramienta local de rescate (`Herramientas\RestablecerContrasena.ps1`); restablece la contraseña y desbloquea la cuenta **sin borrar los datos**. El procedimiento está en el *Manual de Despliegue*, apartado «Recuperación de contraseña olvidada» de la sección 9.
 
 ### 3.4 Cambiar la contraseña
 
@@ -75,14 +79,16 @@ Si las nuevas contraseñas no coinciden verás: *“Las contraseñas nuevas no c
 
 En la barra lateral pulsa **Cerrar sesión**. La sesión también finaliza automáticamente:
 
-- A los **8 horas** de haber iniciado sesión, o
+- A los **8 horas** de haber iniciado sesión, aunque sigas trabajando (el límite es estricto), o
 - Después de **15 minutos sin actividad** (movimiento del ratón o pulsaciones de tecla).
+
+Un minuto antes de cerrarse por inactividad aparece un aviso con las opciones **Continuar** y **Cerrar sesión**. Si eliges **Continuar**, el contador de inactividad vuelve a empezar, pero el límite de 8 horas no se reinicia.
 
 ---
 
 ## 4. Navegación general
 
-La barra lateral tiene seis módulos:
+La barra lateral tiene siete módulos:
 
 | Módulo | Para qué sirve |
 |---|---|
@@ -91,6 +97,7 @@ La barra lateral tiene seis módulos:
 | **Préstamos** | Registro y control de créditos. |
 | **Historial** | Consulta del detalle de un cliente seleccionado. |
 | **Abonos** | Registro y control de pagos. |
+| **Comprobantes** | Descarga de recibos de préstamos saldados. |
 | **Asistente IA** | Preguntas sobre los datos locales. |
 
 ### Barra lateral colapsable
@@ -122,14 +129,11 @@ Al entrar verás el **Resumen Financiero**:
 | **Préstamos activos** | Cuentas con saldo mayor que cero. |
 | **Abonos registrados** | Cantidad total de pagos históricos. |
 | **Mediana de préstamos** | Valor típico de los créditos. |
-| **Errores registrados** | Intentos de operaciones inválidas en la sesión. |
-| **Campos incompletos** | Personas sin teléfono o movimientos sin notas. |
 
-También verás:
+También verás dos gráficas de los últimos 12 meses, **de izquierda a derecha y de más antiguo a más reciente**:
 
-- **Frecuencia de uso por módulo**, con contadores de cada sección visitada.
-- **Abonos por mes**, gráfica de barras de los últimos 12 meses.
-- **Tendencia de pagos**, gráfica de línea.
+- **Abonos por mes**, barras con el mes en español y el importe al pasar el ratón.
+- **Tendencia de pagos**, línea con etiqueta de mes en el eje, escala horizontal y un punto por mes.
 
 Pulsa **Actualizar datos** para refrescar los indicadores después de registrar movimientos.
 
@@ -169,7 +173,7 @@ En el campo **Buscar**, escribe parte del nombre o del teléfono:
 
 1. Entra a **Préstamos**.
 2. En el panel izquierdo:
-   - Selecciona la **Persona**.
+   - Busca y elige la **Persona**: el cuadro queda limpio para buscar otra, pero debajo aparece el indicador **Cliente:** con el nombre elegido (y una marca verde cuando hay selección).
    - Escribe el **Monto a prestar** (mayor que cero).
    - Elige la **Fecha del crédito** (no puede ser futura).
    - Agrega **Notas u observaciones** (opcional).
@@ -212,7 +216,7 @@ Selecciona la fila y pulsa **Editar préstamo** o **Eliminar préstamo**. Elimin
 ### Registrar un abono
 
 1. Entra a **Abonos**.
-2. Selecciona el **Préstamo pendiente**. El cuadro muestra el nombre del cliente y su saldo.
+2. Selecciona el **Préstamo pendiente**. El cuadro muestra el nombre del cliente y su saldo; debajo, el indicador **Cliente:** confirma la persona elegida con una marca verde. Solo aparecen las cuentas con saldo mayor que cero: al saldarse, el préstamo se retira automáticamente de este selector.
 3. Escribe el **Monto abonado**.
 4. Elige la **Fecha del pago**. El calendario solo permite fechas entre la fecha del préstamo y hoy.
 5. Agrega **Notas** (opcional).
@@ -222,6 +226,10 @@ Después de guardar, el mensaje indica el saldo restante, por ejemplo:
 
 - *“Abono registrado. Aún debe $12,000.”*
 - *“Abono registrado. El préstamo ya está pagado.”*
+
+### Comprobante de préstamo saldado
+
+Cuando un abono deja el saldo en cero, el aviso superior ofrece el botón **Descargar recibo**. Para volver a emitir un PDF (incluidos los préstamos saldados con anterioridad) entra en la sección **Comprobantes**, que está justo después de **Abonos** en el menú lateral.
 
 ### Reglas importantes
 
@@ -243,7 +251,7 @@ Selecciona un abono en la tabla y pulsa **Editar abono** o **Eliminar abono**. A
 La pestaña **Historial** muestra toda la información de **un cliente a la vez**:
 
 1. En **Buscar cliente en historial**, escribe parte del nombre o del teléfono.
-2. Elige el cliente en la lista desplegable.
+2. Elige el cliente en la lista desplegable. El cuadro vuelve a quedar vacío para buscar otro, pero el indicador **Cliente:** y el resumen siguen mostrando la persona elegida.
 3. Se actualizan automáticamente:
    - **Resumen**: cliente, préstamos, prestado, pagado, saldo y estado.
    - **Préstamos del cliente seleccionado**: fecha, monto, abonado, saldo, estado y notas.
@@ -254,28 +262,59 @@ Si no hay cliente elegido, verás el mensaje *“Seleccione un cliente para ver 
 
 ---
 
-## 10. Asistente IA
+## 10. Comprobantes
+
+Esta sección está separada de **Abonos** para no mezclar cuentas pendientes con recibos:
+
+1. Entra a **Comprobantes** en el menú lateral.
+2. Elige un **préstamo saldado** de la lista (muestra el cliente y la referencia de seis dígitos).
+3. Pulsa **Descargar recibo**.
+
+Si todavía no hay préstamos saldados, verás el mensaje *“Aún no hay préstamos saldados”* y la lista no aparece.
+
+El PDF es monocromático y en tamaño A4. Incluye los datos del cliente, la referencia del préstamo con seis dígitos (`000006`), la tabla con todos los abonos, el total abonado, el saldo final, el número de comprobante (`FIA-000006-20261123`) y la fecha de emisión. Se genera en el equipo, sin conexión, y se guarda en la ubicación que elijas con el nombre `Recibo_Nombre_yyyyMMdd.pdf`.
+
+---
+
+## 11. Asistente IA
 
 En la pestaña **Asistente IA** puedes preguntar por préstamos, abonos, saldos e historial:
 
-- Escribe tu pregunta y pulsa **Enviar**.
+- Escribe tu pregunta y pulsa **Enviar** o **Enter**; usa **Shift+Enter** para un salto de línea.
 - Pulsa **Resumen** para obtener un resumen general.
 - Pulsa **Limpiar conversación** para reiniciar el chat.
 
 El asistente:
 
-- Solo **consulta** información local; no modifica datos.
-- Usa un modelo local de Ollama (`qwen2.5:3b`) en `http://localhost:11434`.
+- Solo **consulta** información local; no modifica datos. Consulta los datos de esta aplicación: **no compartas información sensible**.
+- Usa un modelo local de Ollama (`qwen2.5:3b`) en `http://localhost:11434`. Por seguridad solo se conecta a Ollama en el propio equipo o a servidores HTTPS; no envíes datos a direcciones arbitrarias.
 - Valida las cifras contra la base de datos: si el modelo inventa un número, se muestra un aviso.
-- Si Ollama no está disponible, responde: *“Ollama no está disponible. Instale Ollama, ejecute el servicio y configure qwen2.5:3b.”*
+- Si Ollama no está disponible o hay un error, responde de forma genérica: *“No se pudo consultar el asistente. Verifique que Ollama esté disponible.”*
 
 La conversación se guarda solo mientras dure la sesión.
 
 ---
 
-## 11. Buenas prácticas
+## 12. Apariencia y accesibilidad
 
-- Registra siempre el **teléfono** y las **notas**: así baja el indicador *Campos incompletos*.
+- La aplicación se abre con el tema **Negro** por defecto: una interfaz oscura monocromática, con contraste alto y tarjetas elevadas.
+- Desde **Accesibilidad** puedes cambiar el tema, el tamaño del texto, el contraste y las animaciones sin perder funcionalidad.
+- Los avisos flotantes y las ventanas de edición o confirmación siguen el mismo diseño oscuro: cabecera, acciones separadas y cierre visible. El foco va al botón **Guardar/Confirmar**, y si amplías el texto las ventanas se desplazan en vez de recortarse.
+- El foco está activado por defecto con el nivel **Visible** (contorno de 2,5 px) para que siempre se vea dónde estás. El escalado de texto es estable: subir y bajar el tamaño vuelve exactamente al original.
+- Las fechas se eligen en un calendario desplegable del mismo estilo. La cabecera tiene selectores de **Mes** y **Año** para saltos rápidos, y la barra inferior ofrece **Hoy**, **Cancelar** y **Aceptar**:
+  - **Hoy** coloca la fecha actual (respetando los límites permitidos).
+  - **Cancelar** descarta los cambios y restaura la fecha que había al abrir el calendario.
+  - **Aceptar** confirma la fecha y cierra el calendario.
+  - Las flechas de navegación del calendario se han retirado porque causaban fallos; para cambiar de mes o año usa los selectores **Mes** y **Año**. Los nombres para lectores de pantalla siguen funcionando igual.
+- En las tablas de **Personas**, **Préstamos** y **Abonos** puedes seleccionar una fila y pulsar **Supr** para eliminarla; aparece la misma confirmación que con el botón **Eliminar**. Si estás editando una celda, **Supr** sigue borrando texto.
+- Los préstamos saldados no aparecen en el selector principal de **Abonos**; se listan aparte en **Comprobantes** para descargar su recibo en PDF.
+- Tras elegir un cliente en **Préstamos** o **Historial**, el cuadro de búsqueda queda limpio para buscar otro; la persona elegida sigue visible en la etiqueta del formulario o en el resumen del historial.
+
+---
+
+## 13. Buenas prácticas
+
+- Registra siempre el **teléfono** y las **notas**: así el asistente IA tiene más contexto y no reporta datos incompletos.
 - Usa el **ojo** de la contraseña solo cuando estés seguro de que nadie está mirando la pantalla.
 - Cierra sesión o deja que expire si compartes el equipo.
 - Haz copias periódicas de la base de datos (ver el **Manual de Despliegue**).
@@ -283,7 +322,7 @@ La conversación se guarda solo mientras dure la sesión.
 
 ---
 
-## 12. Solución rápida de problemas
+## 14. Solución rápida de problemas
 
 | Síntoma | Qué hacer |
 |---|---|

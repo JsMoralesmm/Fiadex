@@ -21,8 +21,8 @@ public sealed class AppPreferences : INotifyPropertyChanged
     private string _textSize = "Normal";
     private bool _highContrast;
     private bool _reduceMotion;
-    private string _focusLevel = "Normal";
-    private string _theme = "Gris claro";
+    private string _focusLevel = "Visible";
+    private string _theme = "Negro";
     private string _interfaceScale = "100%";
     private string _fontChoice = "Estándar";
 
@@ -105,7 +105,7 @@ public sealed class AppPreferences : INotifyPropertyChanged
                 _highContrast = data?.HighContrast ?? false,
                 _reduceMotion = data?.ReduceMotion ?? false,
                 _focusLevel = data?.FocusLevel ?? (data?.FocusVisible == true ? "Visible" : "Normal"),
-                _theme = data?.Theme ?? "Gris claro",
+                _theme = data?.Theme ?? "Negro",
                 _interfaceScale = data?.InterfaceScale ?? "100%",
                 _fontChoice = data?.FontChoice ?? "Estándar"
             };
@@ -147,8 +147,8 @@ public sealed class AppPreferences : INotifyPropertyChanged
         _textSize = "Normal";
         _highContrast = false;
         _reduceMotion = false;
-        _focusLevel = "Normal";
-        _theme = "Gris claro";
+        _focusLevel = "Visible";
+        _theme = "Negro";
         _interfaceScale = "100%";
         _fontChoice = "Estándar";
 

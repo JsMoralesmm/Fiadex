@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Fiadex"
         Title="Fiadex — Acceso Seguro"
-        Height="540" Width="460"
+        Height="560" Width="900"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MonochromeBackgroundBrush}">
@@ -12,84 +12,133 @@
         <Geometry x:Key="IconLogo">M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5</Geometry>
     </Window.Resources>
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24">
-        <!-- Main Login Card (Linear / Stripe inspired) -->
-        <Border Width="380"
-                Background="{DynamicResource MonochromeSurfaceBrush}"
+    <Grid Margin="28">
+        <Border Background="{DynamicResource MonochromeSurfaceBrush}"
                 BorderBrush="{DynamicResource MonochromeBorderBrush}"
-                BorderThickness="1"
-                CornerRadius="10"
-                Padding="32,36">
-            <StackPanel>
-                <!-- Brand Monogram & Title -->
-                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,24">
-                    <Border Width="38" Height="38" CornerRadius="8" Background="{DynamicResource MonochromePrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,12">
-                        <Path Data="{StaticResource IconLogo}" Fill="{DynamicResource MonochromeOnPrimaryBrush}" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Text="FIADEX" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource MonochromeTextBrush}"/>
-                    <TextBlock x:Name="Subtitle" Text="Inicie sesión para acceder al sistema"
-                               FontSize="12" Foreground="{DynamicResource MonochromeSecondaryBrush}"
-                               HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                </StackPanel>
+                BorderThickness="1" CornerRadius="18"
+                Effect="{StaticResource FloatingShadow}"
+                ClipToBounds="True">
 
-                <!-- Input: Usuario -->
-                <TextBlock Text="Usuario" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                <TextBox x:Name="UsernameBox"
-                         Height="38"
-                         Padding="10,6"
-                         Margin="0,4,0,14"
-                         AutomationProperties.Name="Usuario"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="310"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <!-- Input: Contraseña -->
-                <TextBlock Text="Contraseña" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
-                <local:PasswordField x:Name="PasswordField"
-                                     Height="38"
-                                     Margin="0,4,0,8"
-                                     AutomationProperties.Name="Contraseña"/>
+                <!-- Panel de marca -->
+                <Border Grid.Column="0"
+                        Background="{DynamicResource MonochromeSurfaceAltBrush}"
+                        BorderBrush="{DynamicResource MonochromeBorderBrush}"
+                        BorderThickness="0,0,1,0"
+                        Padding="34,38">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                <!-- Helper Text -->
-                <TextBlock x:Name="PasswordHelp"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource MonochromeSecondaryBrush}"
-                           FontSize="11" FontStyle="Italic"
-                           Margin="0,0,0,10"
-                           Visibility="Collapsed"
-                           Text="Mínimo 12 caracteres con mayúscula, minúscula, número y símbolo."/>
+                        <StackPanel VerticalAlignment="Center">
+                            <Border Width="56" Height="56" CornerRadius="16"
+                                    Background="{DynamicResource MonochromePrimaryBrush}"
+                                    HorizontalAlignment="Left" Margin="0,0,0,22">
+                                <Path Data="{StaticResource IconLogo}" Fill="{DynamicResource MonochromeOnPrimaryBrush}"
+                                      Stretch="Uniform" Width="26" Height="26"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
 
-                <!-- Feedback Message Text -->
-                <TextBlock x:Name="MessageText"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource MonochromeTextBrush}"
-                           FontSize="11.5"
-                           FontWeight="Medium"
-                           HorizontalAlignment="Center"
-                           Margin="0,4,0,10"/>
+                            <TextBlock Text="FIADEX" FontSize="28" FontWeight="Bold"
+                                       Foreground="{DynamicResource MonochromeTextBrush}"/>
+                            <TextBlock Text="Control de Préstamos y Cartera" FontSize="13"
+                                       Foreground="{DynamicResource MonochromeSecondaryBrush}"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
 
-                <!-- Primary Submit Action -->
-                <Button x:Name="SubmitButton"
-                        Content="Iniciar sesión"
-                        Height="40"
-                        Margin="0,4,0,0"
-                        Click="SubmitClick"/>
+                            <Border Width="36" Height="2" HorizontalAlignment="Left"
+                                    Background="{DynamicResource MonochromePrimaryBrush}"
+                                    CornerRadius="1" Margin="0,24,0,20"/>
 
-                <!-- Recovery / Unlock Action -->
-                <Button x:Name="UnlockButton"
-                        Content="Desbloquear cuenta"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Height="36"
-                        Margin="0,10,0,0"
-                        Visibility="Collapsed"
-                        Click="UnlockClick"/>
+                            <TextBlock Text="Una forma más clara de registrar fiados, abonos y saldos."
+                                       FontSize="12.5" Foreground="{DynamicResource MonochromeMutedBrush}"
+                                       TextWrapping="Wrap" LineHeight="20"/>
+                        </StackPanel>
 
-                <!-- Footer Tag -->
-                <Border Margin="0,24,0,0" Padding="0,12,0,0" BorderBrush="{DynamicResource MonochromeBorderLightBrush}" BorderThickness="0,1,0,0">
-                    <TextBlock Text="Fiadex • Gestión de Cartera y Ventas Fiadas"
-                               FontSize="10.5"
-                               Foreground="{DynamicResource MonochromeMutedBrush}"
-                               HorizontalAlignment="Center"/>
+                        <StackPanel Grid.Row="1">
+                            <Border Height="1" Background="{DynamicResource MonochromeBorderBrush}" Margin="0,0,0,14"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="7" Height="7" Fill="{DynamicResource MonochromePrimaryBrush}"
+                                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="Sistema local · Sin conexión" FontSize="11.5"
+                                           Foreground="{DynamicResource MonochromeMutedBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </Border>
-            </StackPanel>
+
+                <!-- Panel del formulario -->
+                <Border Grid.Column="1" Background="{DynamicResource MonochromeSurfaceBrush}" Padding="48,40">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="360">
+
+                        <TextBlock Text="Bienvenido" FontSize="24" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource MonochromeTextBrush}"/>
+                        <TextBlock x:Name="Subtitle" Text="Inicie sesión para acceder al sistema"
+                                   FontSize="13" Foreground="{DynamicResource MonochromeSecondaryBrush}"
+                                   Margin="0,5,0,0" TextWrapping="Wrap"/>
+
+                        <Border Height="1" Background="{DynamicResource MonochromeBorderBrush}" Margin="0,26,0,24"/>
+
+                        <TextBlock Text="Usuario" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                        <TextBox x:Name="UsernameBox"
+                                 Height="44"
+                                 Margin="0,6,0,18"
+                                 KeyDown="Input_KeyDown"
+                                 AutomationProperties.Name="Usuario"/>
+
+                        <TextBlock Text="Contraseña" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource MonochromeSecondaryBrush}"/>
+                        <local:PasswordField x:Name="PasswordField"
+                                             Height="44"
+                                             Margin="0,6,0,10"
+                                             KeyDown="Input_KeyDown"
+                                             AutomationProperties.Name="Contraseña"/>
+
+                        <TextBlock x:Name="PasswordHelp"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource MonochromeMutedBrush}"
+                                   FontSize="11.5"
+                                   Margin="0,0,0,8"
+                                   Visibility="Collapsed"
+                                   Text="Mínimo 12 caracteres con mayúscula, minúscula, número y símbolo."/>
+
+                        <TextBlock x:Name="MessageText"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource MonochromeTextBrush}"
+                                   FontSize="12"
+                                   FontWeight="Medium"
+                                   Margin="0,2,0,10"
+                                   AutomationProperties.LiveSetting="Polite"/>
+
+                        <Button x:Name="SubmitButton"
+                                Content="Iniciar sesión"
+                                Height="46"
+                                Margin="0,2,0,0"
+                                IsDefault="True"
+                                Click="SubmitClick"/>
+
+                        <Button x:Name="UnlockButton"
+                                Content="Desbloquear cuenta"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Height="42"
+                                Margin="0,10,0,0"
+                                Visibility="Collapsed"
+                                AutomationProperties.Name="Desbloquear cuenta"
+                                Click="UnlockClick"/>
+
+                        <TextBlock Text="Pulse Enter desde cualquier campo para continuar"
+                                   FontSize="11" Foreground="{DynamicResource MonochromeMutedBrush}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </Window>
-

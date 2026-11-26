@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:presentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+             xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+             xmlns:prim="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
              xmlns:local="clr-namespace:Fiadex">
     <Application.Resources>
         <!-- Value Converters -->
@@ -30,28 +32,28 @@
         <local:RoleToCornerRadiusConverter x:Key="RoleToCornerRadius"/>
         <local:RoleToMarginConverter x:Key="RoleToMargin"/>
 
-        <!-- Monochromatic Design System Tokens (Linear / Notion inspired) -->
-        <Color x:Key="MonochromeBgColor">#F8F9FA</Color>
-        <Color x:Key="MonochromeSurfaceColor">#FFFFFF</Color>
-        <Color x:Key="MonochromeSurfaceAltColor">#F3F4F6</Color>
-        <Color x:Key="MonochromeBorderColor">#E4E4E7</Color>
-        <Color x:Key="MonochromeBorderLightColor">#F0F0F2</Color>
-        <Color x:Key="MonochromeBorderStrongColor">#D1D5DB</Color>
-        <Color x:Key="MonochromePrimaryColor">#18181B</Color>
-        <Color x:Key="MonochromeHoverColor">#27272A</Color>
-        <Color x:Key="MonochromeSecondaryColor">#62626A</Color>
-        <Color x:Key="MonochromeMutedColor">#6C6C74</Color>
-        <Color x:Key="MonochromeTextColor">#18181B</Color>
-        <Color x:Key="MonochromeDisabledColor">#D4D4D8</Color>
-        <Color x:Key="MonochromeOnPrimaryColor">#FFFFFF</Color>
+        <!-- Monochromatic Design System Tokens: capas oscuras y contraste alto. -->
+        <Color x:Key="MonochromeBgColor">#0B0B0F</Color>
+        <Color x:Key="MonochromeSurfaceColor">#15151B</Color>
+        <Color x:Key="MonochromeSurfaceAltColor">#1E1E26</Color>
+        <Color x:Key="MonochromeBorderColor">#2B2B35</Color>
+        <Color x:Key="MonochromeBorderLightColor">#22222B</Color>
+        <Color x:Key="MonochromeBorderStrongColor">#3F3F4C</Color>
+        <Color x:Key="MonochromePrimaryColor">#F5F5F7</Color>
+        <Color x:Key="MonochromeHoverColor">#FFFFFF</Color>
+        <Color x:Key="MonochromeSecondaryColor">#C7C7D1</Color>
+        <Color x:Key="MonochromeMutedColor">#8E8E99</Color>
+        <Color x:Key="MonochromeTextColor">#F7F7F9</Color>
+        <Color x:Key="MonochromeDisabledColor">#5C5C67</Color>
+        <Color x:Key="MonochromeOnPrimaryColor">#0B0B0F</Color>
 
         <!-- Sidebar Tokens -->
-        <Color x:Key="MonochromeSidebarColor">#111113</Color>
-        <Color x:Key="MonochromeSidebarBorderColor">#222226</Color>
-        <Color x:Key="MonochromeSidebarTextColor">#F4F4F5</Color>
-        <Color x:Key="MonochromeSidebarMutedColor">#8E8E98</Color>
-        <Color x:Key="MonochromeSidebarHoverColor">#1F1F24</Color>
-        <Color x:Key="MonochromeSidebarSelectedColor">#27272E</Color>
+        <Color x:Key="MonochromeSidebarColor">#08080B</Color>
+        <Color x:Key="MonochromeSidebarBorderColor">#1D1D25</Color>
+        <Color x:Key="MonochromeSidebarTextColor">#F7F7F9</Color>
+        <Color x:Key="MonochromeSidebarMutedColor">#92929D</Color>
+        <Color x:Key="MonochromeSidebarHoverColor">#1A1A22</Color>
+        <Color x:Key="MonochromeSidebarSelectedColor">#272730</Color>
 
         <!-- Solid Color Brushes -->
         <SolidColorBrush presentationOptions:Freeze="False" x:Key="MonochromeBackgroundBrush" Color="{DynamicResource MonochromeBgColor}"/>
@@ -76,11 +78,17 @@
         <SolidColorBrush presentationOptions:Freeze="False" x:Key="MonochromeSidebarHoverBrush" Color="{DynamicResource MonochromeSidebarHoverColor}"/>
         <SolidColorBrush presentationOptions:Freeze="False" x:Key="MonochromeSidebarSelectedBrush" Color="{DynamicResource MonochromeSidebarSelectedColor}"/>
 
+        <!-- Elevación sutil: da profundidad sin salir de la escala de grises. -->
+        <DropShadowEffect presentationOptions:Freeze="True" x:Key="CardShadow"
+                          Color="#000000" Opacity="0.28" ShadowDepth="2" BlurRadius="14"/>
+        <DropShadowEffect presentationOptions:Freeze="True" x:Key="FloatingShadow"
+                          Color="#000000" Opacity="0.38" ShadowDepth="6" BlurRadius="22"/>
+
         <!-- Tamaños de texto (los ajusta AccessibilityService) -->
-        <sys:Double x:Key="FsXs">10.5</sys:Double>
-        <sys:Double x:Key="FsSm">11.5</sys:Double>
-        <sys:Double x:Key="FsMd">12.5</sys:Double>
-        <sys:Double x:Key="FsBase">13</sys:Double>
+        <sys:Double x:Key="FsXs">11</sys:Double>
+        <sys:Double x:Key="FsSm">12</sys:Double>
+        <sys:Double x:Key="FsMd">13</sys:Double>
+        <sys:Double x:Key="FsBase">13.5</sys:Double>
 
         <!-- Tipografía global seleccionable desde Accesibilidad -->
         <FontFamily x:Key="AppFontFamily">Segoe UI Variable Text, Segoe UI, -apple-system, sans-serif</FontFamily>
@@ -153,9 +161,9 @@
 
         <!-- Global TextBox Style -->
         <Style TargetType="TextBox">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="Margin" Value="0,4,0,12"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,5,0,14"/>
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
@@ -170,7 +178,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 SnapsToDevicePixels="True">
                             <ScrollViewer x:Name="PART_ContentHost"
                                           Focusable="False"
@@ -212,9 +220,9 @@
 
         <!-- Global PasswordBox Style -->
         <Style TargetType="PasswordBox">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="Margin" Value="0,4,0,12"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,5,0,14"/>
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
@@ -229,7 +237,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 SnapsToDevicePixels="True">
                             <ScrollViewer x:Name="PART_ContentHost"
                                           Focusable="False"
@@ -262,9 +270,9 @@
              blanco. Por eso se usa una plantilla propia que toma los colores
              de la paleta de la aplicación. -->
         <Style TargetType="ComboBox">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="Margin" Value="0,4,0,12"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,5,0,14"/>
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
@@ -289,7 +297,7 @@
                                         Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="6"
+                                        CornerRadius="10"
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                         SnapsToDevicePixels="True">
@@ -308,7 +316,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6"
+                                    CornerRadius="10"
                                     SnapsToDevicePixels="True">
                                 <Grid Margin="{TemplateBinding Padding}">
                                     <Grid.ColumnDefinitions>
@@ -407,28 +415,18 @@
             </Setter>
         </Style>
 
-        <!-- Global DatePicker Style -->
-        <Style TargetType="DatePicker">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Margin" Value="0,4,0,12"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
-            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
-            <EventSetter Event="Loaded" Handler="DatePicker_Loaded"/>
-        </Style>
-
         <!-- Primary Button Style (Default Button) -->
         <Style TargetType="Button">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Padding" Value="14,6"/>
-            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="0,5"/>
             <Setter Property="Background" Value="{DynamicResource MonochromePrimaryBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeOnPrimaryBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromePrimaryBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="{DynamicResource FsMd}"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
             <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -437,7 +435,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center"
@@ -466,16 +464,16 @@
 
         <!-- Secondary Button Style -->
         <Style x:Key="SecondaryButtonStyle" TargetType="Button">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Padding" Value="14,6"/>
-            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="0,5"/>
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="FontSize" Value="{DynamicResource FsMd}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
             <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -484,7 +482,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center"
@@ -523,7 +521,7 @@
 
         <!-- Ghost Button Style -->
         <Style x:Key="GhostButtonStyle" TargetType="Button">
-            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="MinHeight" Value="34"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource MonochromeSecondaryBrush}"/>
@@ -537,7 +535,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="GhostBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center"
@@ -560,6 +558,372 @@
             </Setter>
         </Style>
 
+        <!-- Fechas: DatePicker y calendario desplegable con la misma paleta. -->
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="SelectionBrush" Value="{DynamicResource MonochromeBorderStrongBrush}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+        </Style>
+
+        <Style x:Key="DarkCalendarDayButtonStyle" TargetType="prim:CalendarDayButton">
+            <Setter Property="MinWidth" Value="34"/>
+            <Setter Property="MinHeight" Value="34"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="prim:CalendarDayButton">
+                        <Grid Margin="1">
+                            <Rectangle x:Name="HoverBackground" RadiusX="8" RadiusY="8"
+                                       Fill="{DynamicResource MonochromeSurfaceAltBrush}"
+                                       Visibility="Collapsed"/>
+                            <Rectangle x:Name="TodayBorder" RadiusX="8" RadiusY="8"
+                                       Stroke="{DynamicResource MonochromeBorderStrongBrush}"
+                                       StrokeThickness="1" Fill="Transparent" Visibility="Collapsed"/>
+                            <Rectangle x:Name="SelectedBackground" RadiusX="8" RadiusY="8"
+                                       Fill="{DynamicResource MonochromePrimaryBrush}"
+                                       Visibility="Collapsed"/>
+                            <ContentPresenter x:Name="NormalText"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsToday" Value="True">
+                                <Setter TargetName="TodayBorder" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HoverBackground" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="SelectedBackground" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="TodayBorder" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="HoverBackground" Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MonochromeOnPrimaryBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsInactive" Value="True">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkCalendarButtonStyle" TargetType="prim:CalendarButton">
+            <Setter Property="MinWidth" Value="72"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="prim:CalendarButton">
+                        <Border x:Name="ButtonBorder" Margin="2"
+                                Background="Transparent" BorderThickness="0" CornerRadius="9">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource MonochromeSurfaceAltBrush}"/>
+                            </Trigger>
+                            <Trigger Property="HasSelectedDays" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource MonochromePrimaryBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MonochromeOnPrimaryBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsInactive" Value="True">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="prim:CalendarItem">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="prim:CalendarItem">
+                        <ControlTemplate.Resources>
+                            <DataTemplate x:Key="{x:Static prim:CalendarItem.DayTitleTemplateResourceKey}">
+                                <TextBlock Text="{Binding}"
+                                           Foreground="{DynamicResource MonochromeMutedBrush}"
+                                           FontSize="{DynamicResource FsXs}"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,2,0,4"/>
+                            </DataTemplate>
+
+                            <ControlTemplate x:Key="HeaderButtonTemplate" TargetType="Button">
+                                <Border x:Name="HeaderBorder" Background="Transparent" CornerRadius="8" Padding="10,4">
+                                    <ContentPresenter Content="{TemplateBinding Content}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      TextElement.Foreground="{DynamicResource MonochromeTextBrush}"
+                                                      TextElement.FontSize="{DynamicResource FsMd}"
+                                                      TextElement.FontWeight="SemiBold"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource MonochromeSurfaceAltBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+
+                            <ControlTemplate x:Key="PreviousButtonTemplate" TargetType="Button">
+                                <Border x:Name="NavBorder" Width="32" Height="32" Background="Transparent" CornerRadius="8">
+                                    <Path Data="M15 7l-6 7 6 7" Stroke="{DynamicResource MonochromeSecondaryBrush}"
+                                          StrokeThickness="1.8" Fill="Transparent" Stretch="Uniform" Margin="10"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="NavBorder" Property="Background" Value="{DynamicResource MonochromeSurfaceAltBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.3"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+
+                            <ControlTemplate x:Key="NextButtonTemplate" TargetType="Button">
+                                <Border x:Name="NavBorder" Width="32" Height="32" Background="Transparent" CornerRadius="8">
+                                    <Path Data="M9 7l6 7-6 7" Stroke="{DynamicResource MonochromeSecondaryBrush}"
+                                          StrokeThickness="1.8" Fill="Transparent" Stretch="Uniform" Margin="10"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="NavBorder" Property="Background" Value="{DynamicResource MonochromeSurfaceAltBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.3"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ControlTemplate.Resources>
+
+                        <Grid x:Name="PART_Root" HorizontalAlignment="Center" Margin="2">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid x:Name="Header" Grid.Row="0" Height="42">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Flechas de navegación ocultas: el calendario se bugueaba al
+                                             usarlas. La navegación se hace con los selectores Mes/Año. -->
+                                        <Button x:Name="PART_PreviousButton" Grid.Column="0"
+                                                Visibility="Collapsed"
+                                                Focusable="False" HorizontalAlignment="Left"
+                                                Width="34" Height="34" Margin="2,0,0,0"
+                                                Template="{StaticResource PreviousButtonTemplate}"/>
+                                        <Button x:Name="PART_HeaderButton" Grid.Column="1"
+                                                Focusable="False" HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Template="{StaticResource HeaderButtonTemplate}"/>
+                                        <Button x:Name="PART_NextButton" Grid.Column="2"
+                                                Visibility="Collapsed"
+                                                Focusable="False" HorizontalAlignment="Right"
+                                                Width="34" Height="34" Margin="0,0,2,0"
+                                                Template="{StaticResource NextButtonTemplate}"/>
+                                    </Grid>
+
+                                    <Grid x:Name="PART_MonthView" Grid.Row="1"
+                                          Visibility="Visible" HorizontalAlignment="Center"
+                                          Margin="8,0,8,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="34"/><ColumnDefinition Width="34"/>
+                                            <ColumnDefinition Width="34"/><ColumnDefinition Width="34"/>
+                                            <ColumnDefinition Width="34"/><ColumnDefinition Width="34"/>
+                                            <ColumnDefinition Width="34"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/><RowDefinition Height="34"/>
+                                            <RowDefinition Height="34"/><RowDefinition Height="34"/>
+                                            <RowDefinition Height="34"/><RowDefinition Height="34"/>
+                                            <RowDefinition Height="34"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+
+                                    <Grid x:Name="PART_YearView" Grid.Row="1"
+                                          Visibility="Hidden" HorizontalAlignment="Center"
+                                          Margin="8,6,8,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="68"/><ColumnDefinition Width="68"/>
+                                            <ColumnDefinition Width="68"/><ColumnDefinition Width="68"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="42"/><RowDefinition Height="42"/>
+                                            <RowDefinition Height="42"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <Rectangle x:Name="PART_DisabledVisual" Fill="#900B0B0F"
+                                       RadiusX="10" RadiusY="10" Visibility="Collapsed"
+                                       IsHitTestVisible="False"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="PART_DisabledVisual" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Visibility, ElementName=PART_YearView}" Value="Visible">
+                                <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Visibility, ElementName=PART_MonthView}" Value="Visible">
+                                <Setter TargetName="PART_YearView" Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkCalendarStyle" TargetType="Calendar">
+            <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderStrongBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+            <Setter Property="Effect" Value="{StaticResource FloatingShadow}"/>
+            <Setter Property="CalendarDayButtonStyle" Value="{StaticResource DarkCalendarDayButtonStyle}"/>
+            <Setter Property="CalendarButtonStyle" Value="{StaticResource DarkCalendarButtonStyle}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Calendar">
+                        <prim:CalendarItem x:Name="PART_CalendarItem"
+                                           Background="{TemplateBinding Background}"
+                                           BorderBrush="{TemplateBinding BorderBrush}"
+                                           BorderThickness="{TemplateBinding BorderThickness}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="DatePicker">
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Margin" Value="0,4,0,12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CalendarStyle" Value="{StaticResource DarkCalendarStyle}"/>
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource AppFocusVisualStyle}"/>
+            <Setter Property="local:CalendarPopupEnhancer.Enhance" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border x:Name="RootBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"
+                                                   Padding="12,0,4,0"
+                                                   Background="Transparent"
+                                                   BorderThickness="0"
+                                                   Foreground="{TemplateBinding Foreground}"
+                                                   FontSize="{TemplateBinding FontSize}"
+                                                   VerticalContentAlignment="Center"/>
+
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="1"
+                                        Width="40"
+                                        Height="40"
+                                        Margin="0"
+                                        Padding="0"
+                                        MinHeight="0"
+                                        Focusable="False"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Cursor="Hand"
+                                        Foreground="{DynamicResource MonochromeSecondaryBrush}"
+                                        ToolTip="Seleccionar fecha"
+                                        AutomationProperties.Name="Abrir calendario">
+                                    <Path Data="M4 6h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z M3 10h18 M8 3v4 M16 3v4"
+                                          Width="18" Height="18" Stretch="Uniform"
+                                          SnapsToDevicePixels="True"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.5"
+                                          StrokeLineJoin="Round"
+                                          Fill="Transparent"/>
+                                </Button>
+
+                                <Popup x:Name="PART_Popup"
+                                       Grid.ColumnSpan="2"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       Placement="Bottom"
+                                       PlacementTarget="{Binding ElementName=RootBorder}"
+                                       HorizontalOffset="0"
+                                       VerticalOffset="4"
+                                       StaysOpen="False"
+                                       PopupAnimation="None"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource MonochromeBorderStrongBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource MonochromeTextBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="RootBorder" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Sidebar Navigation ListBox and Item Styles -->
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="Transparent"/>
@@ -572,7 +936,7 @@
             <Setter Property="Foreground" Value="{DynamicResource MonochromeSidebarMutedBrush}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Padding" Value="12,9"/>
             <Setter Property="Margin" Value="0,2"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
@@ -584,7 +948,7 @@
                         <Border x:Name="ItemBorder"
                                 Background="{TemplateBinding Background}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"
@@ -612,8 +976,8 @@
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="RowHeight" Value="40"/>
-            <Setter Property="ColumnHeaderHeight" Value="38"/>
+            <Setter Property="RowHeight" Value="44"/>
+            <Setter Property="ColumnHeaderHeight" Value="42"/>
             <Setter Property="GridLinesVisibility" Value="Horizontal"/>
             <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource MonochromeBorderLightBrush}"/>
             <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
@@ -634,15 +998,15 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="{DynamicResource FsXs}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
-            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="14,10"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
         <Style TargetType="DataGridCell">
             <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Padding" Value="14,8"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -718,14 +1082,62 @@
             </Grid>
         </ControlTemplate>
 
+        <!-- Scrollbars finos, en vez de los clásicos bloques grises de Windows. -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="{DynamicResource MonochromeBorderStrongBrush}"
+                                                        CornerRadius="4" Margin="2,0"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceAltBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderStrongBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Metric Card Style (Used in Dashboard) -->
         <Style x:Key="MetricCardStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="18,16"/>
-            <Setter Property="Margin" Value="0,0,12,12"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="20,18"/>
+            <Setter Property="Margin" Value="0,0,14,14"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
         </Style>
 
         <!-- Panel Card Style -->
@@ -733,8 +1145,116 @@
             <Setter Property="Background" Value="{DynamicResource MonochromeSurfaceBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MonochromeBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="20"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="22"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+        </Style>
+
+        <!-- Modales: mismas capas visuales que el login, con chrome propio. -->
+        <Geometry x:Key="IconModalLogo">M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5</Geometry>
+
+        <Style x:Key="ModalLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeSecondaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="ModalHintStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeMutedBrush}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,0,0,18"/>
+        </Style>
+
+        <Style x:Key="ModalMessageStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource FsSm}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <Style x:Key="ModalWindowStyle" TargetType="Window">
+            <Setter Property="WindowStyle" Value="None"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="ResizeMode" Value="CanResize"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource MonochromeTextBrush}"/>
+            <Setter Property="FontSize" Value="{DynamicResource FsBase}"/>
+            <Setter Property="shell:WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <shell:WindowChrome CaptionHeight="0"
+                                        CornerRadius="18"
+                                        ResizeBorderThickness="6"
+                                        GlassFrameThickness="0"
+                                        UseAeroCaptionButtons="False"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Border Margin="10"
+                                Background="{DynamicResource MonochromeSurfaceBrush}"
+                                BorderBrush="{DynamicResource MonochromeBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                SnapsToDevicePixels="True"
+                                Effect="{StaticResource FloatingShadow}">
+                            <Grid ClipToBounds="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="58"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0"
+                                        Background="{DynamicResource MonochromeSurfaceAltBrush}"
+                                        BorderBrush="{DynamicResource MonochromeBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        CornerRadius="18,18,0,0"
+                                        MouseLeftButtonDown="ModalDragClick">
+                                    <Grid Margin="20,0,12,0">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                            <Border Width="30" Height="30" CornerRadius="9"
+                                                    Background="{DynamicResource MonochromePrimaryBrush}"
+                                                    Margin="0,0,11,0">
+                                                <Path Data="{StaticResource IconModalLogo}"
+                                                      Fill="{DynamicResource MonochromeOnPrimaryBrush}"
+                                                      Stretch="Uniform" Width="14" Height="14"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{TemplateBinding Title}"
+                                                           Foreground="{DynamicResource MonochromeTextBrush}"
+                                                           FontSize="15" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Fiadex"
+                                                           Foreground="{DynamicResource MonochromeMutedBrush}"
+                                                           FontSize="{DynamicResource FsXs}" Margin="0,1,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <Button HorizontalAlignment="Right"
+                                                Style="{StaticResource GhostButtonStyle}"
+                                                Width="32" Height="32" MinHeight="0" Padding="0"
+                                                Content="✕" FontSize="15"
+                                                Foreground="{DynamicResource MonochromeSecondaryBrush}"
+                                                ToolTip="Cerrar"
+                                                AutomationProperties.Name="Cerrar ventana"
+                                                Click="CloseModalClick"
+                                                shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+                                    </Grid>
+                                </Border>
+
+                                <ContentPresenter Grid.Row="1"
+                                                  Margin="28,22,28,26"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  TextElement.Foreground="{DynamicResource MonochromeTextBrush}"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Application.Resources>
 </Application>

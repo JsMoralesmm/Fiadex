@@ -51,12 +51,16 @@ public sealed partial class FiadexDatabase
         }
 
         var today = DateTime.Today;
+        var spanish = CultureInfo.GetCultureInfo("es-ES");
         var points = new List<(string Label, decimal Loans, decimal Payments)>();
+        // De más antiguo a más reciente para que barras y línea se lean en orden cronológico.
         for (var offset = monthCount - 1; offset >= 0; offset--)
         {
             var month = new DateTime(today.Year, today.Month, 1).AddMonths(-offset);
             byMonth.TryGetValue((month.Year, month.Month), out var values);
-            points.Add((month.ToString("MMM", CultureInfo.InvariantCulture), values.Loans, values.Payments));
+            var label = month.ToString("MMM", spanish);
+            label = char.ToUpperInvariant(label[0]) + label[1..];
+            points.Add((label, values.Loans, values.Payments));
         }
 
         var max = points.Count == 0 ? 0 : points.Max(x => x.Payments);

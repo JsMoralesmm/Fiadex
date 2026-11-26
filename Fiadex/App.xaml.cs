@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Windows.Input;
 
 namespace Fiadex;
 
@@ -18,23 +18,22 @@ public partial class App : Application
         AppPreferences.Load();
         AccessibilityService.Apply();
 
+        var database = new FiadexDatabase();
+        database.Initialize();
+
         var login = new LoginWindow();
         login.Show();
     }
 
-    // La plantilla interna de DatePicker fija el Foreground del botón del
-    // calendario a #333333. Como el estilo global de Button le da un fondo
-    // oscuro, el glifo queda invisible. Se corrige al cargar el control.
-    private void DatePicker_Loaded(object sender, RoutedEventArgs e)
+    // La plantilla de ModalWindowStyle usa un chrome sin botones del sistema.
+    private void ModalDragClick(object sender, MouseButtonEventArgs e)
     {
-        if (sender is not DatePicker picker) return;
+        if (e.ChangedButton != MouseButton.Left || e.OriginalSource is Button) return;
+        Window.GetWindow((DependencyObject)sender)?.DragMove();
+    }
 
-        picker.ApplyTemplate();
-        if (picker.Template.FindName("PART_Button", picker) is Button calendarButton &&
-            Application.Current.Resources["MonochromeSurfaceBrush"] is Brush foreground)
-        {
-            calendarButton.Foreground = foreground;
-        }
+    private void CloseModalClick(object sender, RoutedEventArgs e)
+    {
+        Window.GetWindow((DependencyObject)sender)?.Close();
     }
 }
-

@@ -25,6 +25,9 @@ public sealed class Payment
     public decimal Amount { get; set; }
     public DateTime PaymentDate { get; set; }
     public string Notes { get; set; } = string.Empty;
+
+    // Etiqueta legible calculada en la vista; no se persiste en la base.
+    public string LoanLabel { get; set; } = string.Empty;
 }
 
 public sealed class LoanSummary
@@ -57,8 +60,6 @@ public sealed record MonthlyAmount(
     decimal Payments,
     double PaymentBarHeight);
 
-public sealed record ModuleUsage(string Module, int Count);
-
 public sealed class ChatMessage
 {
     public required string Role { get; init; }
@@ -66,3 +67,18 @@ public sealed class ChatMessage
 }
 
 public sealed record ToastMessage(string Text, bool IsError);
+
+public sealed record ReceiptPayment(DateTime Date, decimal Amount, string Notes);
+
+public sealed record ReceiptData(
+    long LoanId,
+    string ReceiptNumber,
+    string ClientName,
+    string ClientPhone,
+    decimal LoanAmount,
+    DateTime LoanDate,
+    IReadOnlyList<ReceiptPayment> Payments,
+    decimal TotalPaid,
+    decimal Balance,
+    string Notes,
+    DateTime IssuedAt);

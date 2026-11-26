@@ -35,17 +35,8 @@ public partial class EditPaymentWindow : Window
             }
 
             var paymentDate = DateBox.SelectedDate.Value.Date;
-            if (paymentDate < _loanDate)
-            {
-                Message.Text = $"La fecha del abono no puede ser anterior a la fecha del préstamo ({_loanDate:dd/MM/yyyy}).";
-                return;
-            }
-
-            if (paymentDate > DateTime.Today)
-            {
-                Message.Text = "La fecha del abono no puede ser futura.";
-                return;
-            }
+            DomainRules.ValidateAmount(amount, "abono");
+            DomainRules.ValidatePaymentDate(_loanDate, paymentDate);
 
             _database.UpdatePayment(
                 _payment.Id,

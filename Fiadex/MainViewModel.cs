@@ -10,16 +10,21 @@ public partial class MainViewModel : ObservableValidator
     private readonly IFiadexDatabase _database;
     private readonly ChatService _chatService;
     private readonly ToastService _toastService;
-    private readonly Dictionary<string, int> _moduleCounters = new();
+    private readonly IReceiptExportService _receiptExportService;
     private List<Person> _allHistoryClients = [];
 
     private List<Person> _allPeople = [];
     [ObservableProperty] private ObservableCollection<Person> _people = [];
     [ObservableProperty] private ObservableCollection<Person> _filteredPeople = [];
     [ObservableProperty] private ObservableCollection<LoanSummary> _loans = [];
+    // Abonos solo trabaja con préstamos pendientes; los saldados se mantienen
+    // en una lista aparte exclusivamente para descargar comprobantes.
+    [ObservableProperty] private ObservableCollection<LoanSummary> _pendingLoans = [];
+    [ObservableProperty] private ObservableCollection<LoanSummary> _settledLoans = [];
     [ObservableProperty] private ObservableCollection<Payment> _payments = [];
     [ObservableProperty] private Person? _selectedPerson;
     [ObservableProperty] private LoanSummary? _selectedLoan;
+    [ObservableProperty] private LoanSummary? _selectedSettledLoan;
     [ObservableProperty] private Payment? _selectedPayment;
     [ObservableProperty] private string _statusMessage = "Listo";
     [ObservableProperty] private decimal _pendingTotal;
@@ -38,18 +43,19 @@ public partial class MainViewModel : ObservableValidator
     [ObservableProperty] private ObservableCollection<Payment> _historyPayments = [];
     [ObservableProperty] private ObservableCollection<MonthlyAmount> _monthlyAnalytics = [];
     [ObservableProperty] private decimal _medianLoanAmount;
-    [ObservableProperty] private int _errorCount;
-    [ObservableProperty] private ObservableCollection<MonthlyAmount>? _lineSeries;
-    [ObservableProperty] private ObservableCollection<ModuleUsage> _moduleUsage = [];
     [ObservableProperty] private ObservableCollection<ChatMessage> _chatMessages = [];
     [ObservableProperty] private string _chatInput = string.Empty;
     [ObservableProperty] private bool _chatIsLoading;
     [ObservableProperty] private string _bannerMessage = string.Empty;
     [ObservableProperty] private bool _bannerIsError;
+    [ObservableProperty] private string _bannerActionText = string.Empty;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DownloadReceiptCommand))]
+    private bool _canDownloadReceipt;
     [ObservableProperty] private bool _isSidebarCollapsed;
     [ObservableProperty] private bool _isSidebarPinned = true;
     [ObservableProperty] private ObservableCollection<string> _sections =
-        new(["Dashboard", "Personas", "Préstamos", "Historial", "Abonos", "Asistente IA"]);
+        new(["Dashboard", "Personas", "Préstamos", "Historial", "Abonos", "Comprobantes", "Asistente IA"]);
 
     [ObservableProperty]
     [Required(ErrorMessage = "El nombre de la persona es obligatorio.")]
@@ -79,17 +85,18 @@ public partial class MainViewModel : ObservableValidator
 
     public ObservableCollection<ToastMessage> Toasts => _toastService.Messages;
 
-    public MainViewModel(IFiadexDatabase database, ToastService? toastService = null)
+    public MainViewModel(IFiadexDatabase database, ToastService? toastService = null,
+        IReceiptExportService? receiptExportService = null)
     {
         _database = database;
-        _database.Initialize();
         _toastService = toastService ?? new ToastService();
+        _receiptExportService = receiptExportService ?? new ReceiptExportService();
         _chatService = new ChatService(_database);
         Refresh();
         ChatMessages.Add(new ChatMessage
         {
             Role = "assistant",
-            Text = "Hola. Puedes preguntarme por préstamos, abonos, saldos e historial. Solo consulto información local."
+            Text = "Hola. Puedes preguntarme por préstamos, abonos, saldos e historial. Consulto los datos de esta aplicación; no compartas información sensible."
         });
     }
 
@@ -134,14 +141,11 @@ public partial class MainViewModel : ObservableValidator
             return;
         }
 
-        if (LoanDate.Date > DateTime.Today)
-        {
-            Failure("La fecha del préstamo no puede ser futura.");
-            return;
-        }
-
         try
         {
+            DomainRules.ValidateAmount(LoanAmount, "monto del préstamo");
+            DomainRules.ValidateLoanDate(LoanDate);
+
             var personId = SelectedPerson.Id;
             var hadLoan = Loans.Any(x => x.Loan.PersonId == personId);
             var loanId = _database.AddLoan(personId, LoanAmount, LoanDate, LoanNotes);
@@ -176,29 +180,19 @@ public partial class MainViewModel : ObservableValidator
             return;
         }
 
-        var loanId = SelectedLoan.Loan.Id;
-        var loanDate = SelectedLoan.Loan.LoanDate.Date;
-        var paymentDate = PaymentDate.Date;
-        if (paymentDate < loanDate)
-        {
-            Failure($"La fecha del abono no puede ser anterior a la fecha del préstamo ({loanDate:dd/MM/yyyy}).");
-            return;
-        }
-
-        if (paymentDate > DateTime.Today)
-        {
-            Failure("La fecha del abono no puede ser futura.");
-            return;
-        }
-
         try
         {
+            DomainRules.ValidateAmount(PaymentAmount, "abono");
+            DomainRules.ValidatePaymentDate(SelectedLoan.Loan.LoanDate, PaymentDate);
+
+            var loanId = SelectedLoan.Loan.Id;
             _database.AddPayment(loanId, PaymentAmount, PaymentDate, PaymentNotes);
             PaymentAmount = 0;
             PaymentNotes = string.Empty;
             ClearErrors(nameof(PaymentAmount));
             Refresh();
             ReportLoanStatus(loanId, "Abono registrado.");
+            OfferReceipt(loanId);
         }
         catch (Exception exception)
         {
@@ -211,6 +205,7 @@ public partial class MainViewModel : ObservableValidator
     {
         var selectedPersonId = SelectedPerson?.Id;
         var selectedLoanId = SelectedLoan?.Loan.Id;
+        var selectedSettledLoanId = SelectedSettledLoan?.Loan.Id;
         var selectedPaymentId = SelectedPayment?.Id;
         var historyClientId = HistorySelectedPerson?.Id;
 
@@ -218,13 +213,22 @@ public partial class MainViewModel : ObservableValidator
         _allHistoryClients = _allPeople;
         People = new ObservableCollection<Person>(_allPeople);
         Loans = new ObservableCollection<LoanSummary>(_database.GetLoans());
+        PendingLoans = new ObservableCollection<LoanSummary>(Loans.Where(x => x.Balance > 0m));
+        SettledLoans = new ObservableCollection<LoanSummary>(Loans.Where(x => x.Balance <= 0m));
         Payments = new ObservableCollection<Payment>(_database.GetPayments());
+        foreach (var payment in Payments)
+        {
+            payment.LoanLabel = BuildLoanLabel(payment.LoanId);
+        }
 
         SelectedPerson = selectedPersonId.HasValue
             ? People.FirstOrDefault(x => x.Id == selectedPersonId.Value)
             : null;
         SelectedLoan = selectedLoanId.HasValue
-            ? Loans.FirstOrDefault(x => x.Loan.Id == selectedLoanId.Value)
+            ? PendingLoans.FirstOrDefault(x => x.Loan.Id == selectedLoanId.Value)
+            : null;
+        SelectedSettledLoan = selectedSettledLoanId.HasValue
+            ? SettledLoans.FirstOrDefault(x => x.Loan.Id == selectedSettledLoanId.Value)
             : null;
         SelectedPayment = selectedPaymentId.HasValue
             ? Payments.FirstOrDefault(x => x.Id == selectedPaymentId.Value)
@@ -246,7 +250,6 @@ public partial class MainViewModel : ObservableValidator
         MissingFields = dashboard.MissingFields;
         MonthlyAnalytics = new ObservableCollection<MonthlyAmount>(_database.GetMonthlyAnalytics());
         MedianLoanAmount = _database.GetMedianLoanAmount();
-        LineSeries = MonthlyAnalytics;
     }
 
     partial void OnPersonSearchChanged(string value) => ApplyPersonFilter();
@@ -275,6 +278,9 @@ public partial class MainViewModel : ObservableValidator
             PaymentDate = DateTime.Today;
         }
     }
+
+    partial void OnSelectedSettledLoanChanged(LoanSummary? value) =>
+        CanDownloadReceipt = value is not null;
 
     [RelayCommand]
     private void ClearPersonSearch() => PersonSearch = string.Empty;
@@ -323,6 +329,19 @@ public partial class MainViewModel : ObservableValidator
             _database.GetLoans().Where(x => x.Loan.PersonId == personId));
         HistoryPayments = new ObservableCollection<Payment>(
             _database.GetPaymentHistory(personId));
+        foreach (var payment in HistoryPayments)
+        {
+            payment.LoanLabel = BuildLoanLabel(payment.LoanId);
+        }
+    }
+
+    private string BuildLoanLabel(long loanId)
+    {
+        var loan = Loans.FirstOrDefault(item => item.Loan.Id == loanId)
+            ?? HistoryLoans.FirstOrDefault(item => item.Loan.Id == loanId);
+        return loan is null
+            ? $"N.º {loanId:000000}"
+            : $"{loan.Loan.PersonName} · {loanId:000000}";
     }
 
     public void SetStatus(string message) => StatusMessage = message;
@@ -339,14 +358,6 @@ public partial class MainViewModel : ObservableValidator
             ? $"{action} El préstamo ya está pagado."
             : $"{action} Aún debe {loan.Balance:C0}.";
         Success(message);
-    }
-
-    public void RegisterModuleUsage(string module)
-    {
-        _moduleCounters[module] = _moduleCounters.TryGetValue(module, out var count) ? count + 1 : 1;
-        ModuleUsage = new ObservableCollection<ModuleUsage>(
-            _moduleCounters.OrderByDescending(x => x.Value)
-                .Select(x => new ModuleUsage(x.Key, x.Value)));
     }
 
     [RelayCommand]
@@ -366,14 +377,11 @@ public partial class MainViewModel : ObservableValidator
             var answer = await _chatService.AskAsync(question);
             ChatMessages.Add(new ChatMessage { Role = "assistant", Text = answer });
         }
-        catch (Exception exception)
+        catch (Exception)
         {
-            Failure($"No fue posible consultar el asistente: {exception.Message}");
-            ChatMessages.Add(new ChatMessage
-            {
-                Role = "assistant",
-                Text = $"No fue posible consultar el asistente: {exception.Message}"
-            });
+            const string message = "No se pudo consultar el asistente. Verifique que Ollama esté disponible.";
+            Failure(message);
+            ChatMessages.Add(new ChatMessage { Role = "assistant", Text = message });
         }
         finally
         {
@@ -396,9 +404,9 @@ public partial class MainViewModel : ObservableValidator
             var answer = await _chatService.SummarizeAsync();
             ChatMessages.Add(new ChatMessage { Role = "assistant", Text = answer });
         }
-        catch (Exception exception)
+        catch (Exception)
         {
-            Failure($"No fue posible generar el resumen: {exception.Message}");
+            Failure("No se pudo generar el resumen. Verifique que Ollama esté disponible.");
         }
         finally
         {
@@ -419,7 +427,71 @@ public partial class MainViewModel : ObservableValidator
     }
 
     [RelayCommand]
-    private void ClearBanner() => BannerMessage = string.Empty;
+    private void ClearBanner() => ClearBannerMessage();
+
+    private void ClearBannerMessage()
+    {
+        BannerMessage = string.Empty;
+        BannerActionText = string.Empty;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDownloadReceipt))]
+    private void DownloadReceipt()
+    {
+        if (!CanDownloadReceipt || SelectedSettledLoan is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var loan = SelectedSettledLoan.Loan;
+            var payments = Payments
+                .Where(payment => payment.LoanId == loan.Id)
+                .OrderBy(payment => payment.PaymentDate)
+                .Select(payment => new ReceiptPayment(payment.PaymentDate, payment.Amount, payment.Notes))
+                .ToArray();
+            var person = _allPeople.FirstOrDefault(candidate => candidate.Id == loan.PersonId);
+            var issuedAt = DateTime.Now;
+            var receipt = new ReceiptData(
+                loan.Id,
+                $"FIA-{loan.Id:000000}-{issuedAt:yyyyMMdd}",
+                loan.PersonName,
+                person?.Phone ?? string.Empty,
+                loan.Amount,
+                loan.LoanDate,
+                payments,
+                SelectedSettledLoan.Paid,
+                SelectedSettledLoan.Balance,
+                loan.Notes,
+                issuedAt);
+
+            if (_receiptExportService.Export(receipt))
+            {
+                ClearBannerMessage();
+                Success("Comprobante descargado correctamente.");
+            }
+        }
+        catch (Exception exception)
+        {
+            Failure(exception.Message);
+        }
+    }
+
+    private void OfferReceipt(long loanId)
+    {
+        var loan = Loans.FirstOrDefault(item => item.Loan.Id == loanId);
+        if (loan is null || loan.Balance > 0m)
+        {
+            return;
+        }
+
+        SelectedSettledLoan = SettledLoans.FirstOrDefault(item => item.Loan.Id == loanId);
+
+        BannerIsError = false;
+        BannerMessage = $"Préstamo saldado. Descargá el comprobante de {loan.Loan.PersonName}.";
+        BannerActionText = "Descargar recibo";
+    }
 
     [RelayCommand]
     private void ToggleSidebar() => IsSidebarCollapsed = !IsSidebarCollapsed;
@@ -432,16 +504,17 @@ public partial class MainViewModel : ObservableValidator
     private void Success(string message)
     {
         StatusMessage = message;
-        BannerMessage = string.Empty;
+        ClearBannerMessage();
+        BannerIsError = false;
         _toastService.Show(message);
     }
 
     private void Failure(string message)
     {
-        ErrorCount++;
         StatusMessage = message;
         BannerMessage = message;
         BannerIsError = true;
+        BannerActionText = string.Empty;
         _toastService.Show(message, true);
     }
 }

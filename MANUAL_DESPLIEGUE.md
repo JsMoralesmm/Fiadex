@@ -1,6 +1,6 @@
 # Manual de Despliegue — Fiadex
 
-**Versión 1.0 — 19/11/2026**
+**Versión 1.2 — 25/11/2026**
 
 ## 1. Objetivo
 
@@ -19,11 +19,15 @@ Este manual describe cómo publicar, distribuir, instalar, actualizar, respaldar
 
 Características del ZIP actual:
 
-- Tamaño aproximado: **62 MiB** (puede variar ligeramente según los manuales incluidos).
+- Tamaño aproximado: **70 MiB** (puede variar ligeramente según los manuales incluidos).
 - Incluye carpetas de recursos por idioma (`cs`, `de`, `es`, `fr`, etc.) y la carpeta `Manuales\` con los tres PDF.
+- Incluye el rediseño oscuro monocromático, toasts y modales modernizados, el calendario de fechas sin flechas de navegación (usa selectores de mes y año) con barra **Hoy/Aceptar/Cancelar**, el atajo **Supr** para eliminar filas y el texto **“Bienvenido”** en el acceso.
+- Incluye las mejoras de seguridad: PBKDF2 de 600 000 iteraciones para contraseñas nuevas, desbloqueo que exige la contraseña actual, sesión con límite estricto de 8 horas y asistente IA limitado a Ollama local o HTTPS.
+- Incluye la sección **Comprobantes** separada de Abonos, gráficas mensuales ordenadas con meses en español y selectores de cliente que quedan limpios tras elegir.
+- No incluye archivos `.pdb` de depuración.
 - Ejecutable principal: `Fiadex.exe`.
 - Ensamblado de la aplicación: `Fiadex.dll`.
-- SHA-256 de `Fiadex.dll`: `8E20FB8836C348DC5277313E62660A45131EAF72C3B848C5A79772F17F8D1504`.
+- SHA-256 de `Fiadex.dll`: `E453E56A1337D565B084B44B832339256AB836B4F8534027772FA1690768EBEE`.
 
 > El hash cambiará cada vez que se modifique el código. Vuelve a calcularlo tras cada publicación.
 
@@ -40,7 +44,7 @@ Características del ZIP actual:
 C:\Users\<usuario>\AppData\Local\Fiadex\fiadex.db
 ```
 
-- Espacio libre para el ZIP (~62 MiB) y la carpeta extraída (algo más del doble).
+- Espacio libre para el ZIP (~70 MiB) y la carpeta extraída (algo más del doble).
 
 ### Opcionales (Asistente IA)
 
@@ -149,14 +153,14 @@ dotnet publish Fiadex\Fiadex.csproj `
   -o publish\win-x64
 ```
 
-Después elimina el ZIP anterior y comprime todo el contenido de `publish\win-x64` en `Fiadex-win-x64-portable.zip`.
+Después elimina los archivos `.pdb` de `publish\win-x64`, borra el ZIP anterior y comprime todo el contenido en `Fiadex-win-x64-portable.zip`.
 
 ### Criterios de aceptación antes de distribuir
 
-- `dotnet test`: **30/30 correctas**.
-- `dotnet build -c Release`: **0 advertencias, 0 errores**.
+- `dotnet test Fiadex.slnx`: **16/16 correctas**.
+- `dotnet build Fiadex\Fiadex.csproj -c Release`: **0 advertencias, 0 errores**.
 - Auditoría visual: **0 problemas**.
-- El ZIP debe contener `Fiadex.exe` y `Fiadex.dll` en la raíz.
+- El ZIP debe contener `Fiadex.exe` y `Fiadex.dll` en la raíz, los 3 PDF de `Manuales\` y **ningún** archivo `.pdb`.
 
 ### Verificación del paquete
 
@@ -235,11 +239,43 @@ sqlite3 "$env:LOCALAPPDATA\Fiadex\fiadex.db" "PRAGMA integrity_check;"
 
 ## 9. Seguridad en el despliegue
 
-- La contraseña se guarda como PBKDF2-SHA-256 (100 000 iteraciones) con sal aleatoria.
+- La contraseña se guarda como PBKDF2-SHA-256 con sal aleatoria: **600 000 iteraciones** para las contraseñas nuevas (prefijo `F2$`). Los hashes antiguos de 100 000 iteraciones siguen funcionando y se migran automáticamente al primer inicio de sesión correcto.
 - El archivo `fiadex.db` contiene los datos del negocio: restringe el acceso al perfil del usuario y no lo subas a repositorios ni a unidades compartidas.
-- No se guardan credenciales en texto plano ni en archivos del repositorio.
-- Si el equipo es compartido, usa **Cerrar sesión**; la sesión caduca sola a los 8 horas o tras 15 minutos de inactividad.
+- No se guardan credenciales en texto plano ni en archivos del repositorio; se eliminó cualquier archivo auxiliar con contraseñas legibles.
+- El desbloqueo de una cuenta exige la contraseña actual y los mensajes de error son genéricos para no revelar si un usuario existe.
+- Si el equipo es compartido, usa **Cerrar sesión**; la sesión caduca a los **8 horas de forma estricta** (la actividad no la extiende) o tras 15 minutos de inactividad, con un aviso 1 minuto antes.
+- El asistente IA solo se conecta a Ollama en `localhost`/`127.0.0.1`/`::1` o a una URL HTTPS; los errores se muestran de forma genérica y las respuestas se truncan a 4000 caracteres.
 - El puerto de Ollama es local (`localhost:11434`); no hace falta exponerlo en la red.
+
+### Recuperación de contraseña olvidada
+
+Como el desbloqueo exige la contraseña actual, **no hay recuperación desde la propia app** (no hay correo ni 2FA). El administrador del equipo dispone de una herramienta local de rescate:
+
+```text
+C:\Users\juans\Desktop\Proyecto\Fiadex\Herramientas\RestablecerContrasena.ps1
+```
+
+Procedimiento:
+
+1. **Cierra Fiadex** (la herramienta lo comprueba al usar la base por defecto).
+2. Abre PowerShell 7 (`pwsh`) en la raíz del proyecto y ejecuta:
+
+```powershell
+pwsh -File .\Herramientas\RestablecerContrasena.ps1
+```
+
+3. Escribe la nueva contraseña (mínimo 12 caracteres, mayúscula, minúscula, número y símbolo) y confirma con `SI`.
+4. Entra en Fiadex con la contraseña nueva.
+
+La herramienta hace una copia de seguridad con sufijo `.recuperacion-<fecha>.bak`, escribe un hash PBKDF2-SHA-256 de 600 000 iteraciones idéntico al de la aplicación, limpia los intentos fallidos y desbloquea la cuenta. **Conserva todas las personas, préstamos y abonos.**
+
+Para pruebas sobre una copia se puede indicar otra base:
+
+```powershell
+pwsh -File .\Herramientas\RestablecerContrasena.ps1 -DatabasePath "C:\temp\fiadex.db" -NewPassword "ClaveNueva123!" -Force
+```
+
+> Esta herramienta **no se incluye en el ZIP portable**: solo debe estar en manos del administrador del equipo, porque permite cambiar la contraseña a quien tenga acceso a su perfil de Windows.
 
 ---
 
@@ -255,7 +291,10 @@ sqlite3 "$env:LOCALAPPDATA\Fiadex\fiadex.db" "PRAGMA integrity_check;"
 - [ ] El **Historial** muestra solo los préstamos y abonos del cliente elegido.
 - [ ] El doble clic en las tablas no edita nada; los botones **Editar…** sí.
 - [ ] Si Ollama está instalado, el Asistente IA responde; si no, muestra el aviso correspondiente.
-- [ ] Hash de `Fiadex.dll` coincide entre ZIP y `publish\win-x64`.
+- [ ] La cuenta se desbloquea solo con la contraseña correcta.
+- [ ] En el asistente, **Enter** envía la consulta y **Shift+Enter** salta línea.
+- [ ] El ZIP no contiene archivos `.pdb` y sí los 3 PDF en `Manuales\`.
+- [ ] Hash de `Fiadex.dll` coincide entre ZIP, `publish\win-x64` y el documentado en este manual.
 
 ---
 

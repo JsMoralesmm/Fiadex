@@ -40,7 +40,7 @@ Fiadex/
 ├── Fiadex/                        Proyecto principal
 │   ├── App.xaml                   Recursos globales, estilos y convertidores
 │   ├── App.xaml.cs                Arranque: muestra LoginWindow
-│   ├── MainWindow.xaml/.cs        Shell, navegación y seis módulos
+│   ├── MainWindow.xaml/.cs        Shell, navegación y siete módulos
 │   ├── LoginWindow.xaml/.cs       Alta de administrador y acceso
 │   ├── ChangePasswordWindow.*     Cambio de contraseña
 │   ├── PasswordField.xaml/.cs     PasswordBox + TextBox + ojo mostrar/ocultar
@@ -105,7 +105,7 @@ Para pruebas se usa el constructor `new FiadexDatabase(rutaTemporal)`, que crea 
 
 ### 4.3 Navegación
 
-`ListBoxItem`s de la barra lateral con `Tag` = `Dashboard`, `Personas`, `Préstamos`, `Historial`, `Abonos`, `Asistente IA`. El `SelectionChanged` sincroniza el `TabControl` principal y el selector del encabezado, y registra el uso del módulo en `MainViewModel.RegisterModuleUsage`.
+`ListBoxItem`s de la barra lateral con `Tag` = `Dashboard`, `Personas`, `Préstamos`, `Historial`, `Abonos`, `Comprobantes`, `Asistente IA`. El `SelectionChanged` sincroniza el `TabControl` principal y el selector del encabezado. El orden debe coincidir en tres sitios: los `ListBoxItem`, la colección `Sections` de `MainViewModel` y los `TabItem` de `MainTabs`.
 
 La barra colapsada usa `SidebarWidthConverter` (64 px vs 230 px) y convertidores de visibilidad para mostrar solo iconos centrados.
 
@@ -231,7 +231,9 @@ La validación existe en **tres niveles**: validación inline del ViewModel, res
 - `PaymentCount` y `LoanCount`: totales de `PersonAggregates`.
 - `MissingFields`: `GetMissingFieldsCount()` cuenta personas sin teléfono y movimientos sin notas.
 
-`GetMonthlyAnalytics(12)` genera 12 puntos hacia atrás desde el mes actual con etiquetas en `InvariantCulture` y altura de barra proporcional al máximo de abonos. `GetMedianLoanAmount()` calcula la mediana de los importes ordenados.
+`GetMonthlyAnalytics(12)` genera 12 puntos **en orden cronológico** (de más antiguo a más reciente) con nombres de mes en español (`es-ES`) y altura de barra proporcional al máximo de abonos. En la interfaz, las barras muestran la etiqueta del mes y la gráfica de línea (`DrawMonthlyLine` en `MainWindow.xaml.cs`) dibuja cuadrícula horizontal, escala, etiquetas de mes, un punto por mes y centra el punto cuando solo hay un mes con datos. `GetMedianLoanAmount()` calcula la mediana de los importes ordenados.
+
+Los antiguos contadores de errores y de uso por módulo se retiraron del Dashboard y de `MainViewModel`; `MissingFields` se conserva porque `ChatService` lo usa para contextualizar al asistente IA.
 
 ---
 
@@ -299,7 +301,7 @@ Compilación Debug y Release: 0 advertencias, 0 errores.
 | Nuevo campo persistente | `Initialize()` + `Models.cs` + `FiadexDatabase.cs` + XAML; luego `RefreshAggregates()` si afecta a métricas |
 | Cambiar modelo/URL de Ollama | Constructor de `ChatService` (`model`, `baseUrl`) |
 | Cambiar ruta de la base | `GetDefaultDatabasePath()` o constructor con ruta |
-| Agregar un módulo de navegación | `ListBoxItem` en la barra lateral + `TabItem` + `RegisterModuleUsage` |
+| Agregar un módulo de navegación | `ListBoxItem` en la barra lateral + cadena en `MainViewModel.Sections` + `TabItem` en el mismo orden |
 | Modificar el ojo de contraseña | `PasswordField.xaml` / `.xaml.cs` |
 
 ---

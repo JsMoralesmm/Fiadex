@@ -261,25 +261,25 @@ public static class AccessibilityService
 
     private static Dictionary<string, string> Black() => new()
     {
-        ["MonochromeBgColor"] = "#121212",
-        ["MonochromeSurfaceColor"] = "#1E1E1E",
-        ["MonochromeSurfaceAltColor"] = "#2A2A2A",
-        ["MonochromeBorderColor"] = "#3A3A3A",
-        ["MonochromeBorderLightColor"] = "#2F2F2F",
-        ["MonochromeBorderStrongColor"] = "#555555",
-        ["MonochromePrimaryColor"] = "#E4E4E7",
+        ["MonochromeBgColor"] = "#0B0B0F",
+        ["MonochromeSurfaceColor"] = "#15151B",
+        ["MonochromeSurfaceAltColor"] = "#1E1E26",
+        ["MonochromeBorderColor"] = "#2B2B35",
+        ["MonochromeBorderLightColor"] = "#22222B",
+        ["MonochromeBorderStrongColor"] = "#3F3F4C",
+        ["MonochromePrimaryColor"] = "#F5F5F7",
         ["MonochromeHoverColor"] = "#FFFFFF",
-        ["MonochromeSecondaryColor"] = "#C4C4C8",
-        ["MonochromeMutedColor"] = "#A1A1AA",
-        ["MonochromeTextColor"] = "#F4F4F5",
-        ["MonochromeDisabledColor"] = "#6B6B72",
-        ["MonochromeSidebarColor"] = "#0A0A0A",
-        ["MonochromeSidebarBorderColor"] = "#2A2A2A",
-        ["MonochromeSidebarTextColor"] = "#F4F4F5",
-        ["MonochromeSidebarMutedColor"] = "#A1A1AA",
-        ["MonochromeSidebarHoverColor"] = "#1F1F24",
-        ["MonochromeSidebarSelectedColor"] = "#2A2A30",
-        ["MonochromeOnPrimaryColor"] = "#111113"
+        ["MonochromeSecondaryColor"] = "#C7C7D1",
+        ["MonochromeMutedColor"] = "#8E8E99",
+        ["MonochromeTextColor"] = "#F7F7F9",
+        ["MonochromeDisabledColor"] = "#5C5C67",
+        ["MonochromeSidebarColor"] = "#08080B",
+        ["MonochromeSidebarBorderColor"] = "#1D1D25",
+        ["MonochromeSidebarTextColor"] = "#F7F7F9",
+        ["MonochromeSidebarMutedColor"] = "#92929D",
+        ["MonochromeSidebarHoverColor"] = "#1A1A22",
+        ["MonochromeSidebarSelectedColor"] = "#272730",
+        ["MonochromeOnPrimaryColor"] = "#0B0B0F"
     };
 
     private static Dictionary<string, string> HighContrastLight() => new()
@@ -362,12 +362,10 @@ public static class AccessibilityService
 
     private static void ApplyTextScale(double scale)
     {
+        // Los recursos Fs* se dejan intactos. El escalado se aplica una sola vez
+        // por elemento desde OriginalFontSize, así no se acumula al cambiar la
+        // preferencia de tamaño de texto.
         _textScale = scale;
-        var resources = Application.Current.Resources;
-        resources["FsXs"] = 10.5 * scale;
-        resources["FsSm"] = 11.5 * scale;
-        resources["FsMd"] = 12.5 * scale;
-        resources["FsBase"] = 13d * scale;
     }
 
     private static void ApplyInterfaceScale(double scale) => _interfaceScale = scale;

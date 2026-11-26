@@ -7,4 +7,3 @@ publish/
 *.db-wal
 usuarios.txt
 *.zip
-!releases/Fiadex-win-x64-portable.zip

@@ -25,6 +25,8 @@ public interface IFiadexDatabase
     bool HasUser();
     void CreateAdmin(string username, string password);
     bool Authenticate(string username, string password);
+    bool VerifyCredentials(string username, string password);
+    bool IsAccountLocked(string username);
     void ChangePassword(string username, string currentPassword, string newPassword);
-    void UnlockAccount(string username);
+    bool UnlockAccount(string username, string password);
 }

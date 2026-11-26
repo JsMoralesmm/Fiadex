@@ -82,16 +82,8 @@ public partial class PersonPicker : UserControl
             return;
         }
 
-        // Si el texto ya no coincide con la persona elegida, se limpia la selección:
-        // así el préstamo nunca queda asociado a alguien distinto de lo que se ve.
-        if (SelectedItem is not null &&
-            !string.Equals(SelectedItem.Name, SearchBox.Text, StringComparison.Ordinal))
-        {
-            _isSelectingItem = true;
-            SetCurrentValue(SelectedItemProperty, null);
-            _isSelectingItem = false;
-        }
-
+        // El cuadro queda siempre limpio para buscar; la persona elegida se conserva
+        // en SelectedItem (la interfaz la muestra en una etiqueta aparte).
         ReloadResults();
         ResultsPopup.IsOpen = Results.Count > 0 || !string.IsNullOrWhiteSpace(SearchBox.Text);
     }
@@ -198,9 +190,9 @@ public partial class PersonPicker : UserControl
         }
 
         _isUpdatingText = true;
-        SearchBox.Text = SelectedItem?.Name ?? string.Empty;
-        SearchBox.CaretIndex = SearchBox.Text.Length;
+        SearchBox.Text = string.Empty;
         _isUpdatingText = false;
+        Placeholder.Visibility = Visibility.Visible;
         ReloadResults();
     }
 
@@ -237,14 +229,16 @@ public partial class PersonPicker : UserControl
     {
         _isSelectingItem = true;
         SetCurrentValue(SelectedItemProperty, person);
+        // Asegura que un binding TwoWay (SelectedPerson / HistorySelectedPerson)
+        // reciba la persona incluso si SetCurrentValue no propaga el cambio.
+        GetBindingExpression(SelectedItemProperty)?.UpdateSource();
         _isSelectingItem = false;
 
         _isUpdatingText = true;
-        SearchBox.Text = person.Name;
-        SearchBox.CaretIndex = SearchBox.Text.Length;
+        SearchBox.Text = string.Empty;
         _isUpdatingText = false;
 
-        Placeholder.Visibility = Visibility.Collapsed;
+        Placeholder.Visibility = Visibility.Visible;
         _suppressOpenOnFocus = true;
         SearchBox.Focus();
         ResultsPopup.IsOpen = false;

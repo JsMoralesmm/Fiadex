@@ -10,6 +10,9 @@ namespace Fiadex;
 public sealed class ChatService
 {
     private const int MaxToolRounds = 2;
+    private const int MaxAnswerLength = 4000;
+    private const string GenericErrorMessage =
+        "No se pudo consultar el asistente. Verifique que Ollama esté disponible.";
     private const string TimeoutMessage =
         "La consulta tardó demasiado tiempo. Si es la primera vez, Ollama puede estar cargando el modelo; intente de nuevo.";
 
@@ -23,6 +26,7 @@ public sealed class ChatService
     private readonly HttpClient _httpClient;
     private readonly string _model;
     private readonly string _baseUrl;
+    private readonly string _chatEndpoint;
     private readonly List<(string Role, string Text)> _history = [];
 
     public ChatService(
@@ -32,10 +36,57 @@ public sealed class ChatService
         string? baseUrl = null)
     {
         _database = database;
-        _httpClient = httpClient ?? new HttpClient();
         _baseUrl = (baseUrl ?? DefaultBaseUrl).TrimEnd('/');
-        _httpClient.BaseAddress ??= new Uri(_baseUrl + "/");
+        ValidateBaseUrl(_baseUrl);
+
+        // El timeout solo se configura en el cliente creado aquí; uno inyectado
+        // pertenece a quien lo creó y no debe modificarse.
+        if (httpClient is null)
+        {
+            _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+            _httpClient.BaseAddress = new Uri(_baseUrl + "/");
+            _chatEndpoint = "api/chat";
+        }
+        else
+        {
+            _httpClient = httpClient;
+            if (_httpClient.BaseAddress is not null)
+            {
+                ValidateBaseUrl(_httpClient.BaseAddress.AbsoluteUri);
+                _chatEndpoint = "api/chat";
+            }
+            else
+            {
+                _chatEndpoint = _baseUrl + "/api/chat";
+            }
+        }
+
         _model = model ?? DefaultModel;
+    }
+
+    private static void ValidateBaseUrl(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            throw new InvalidOperationException(
+                "La URL del asistente debe ser una dirección HTTP o HTTPS válida.");
+        }
+
+        var host = uri.Host.Trim('[', ']');
+        var isLoopback =
+            host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+            host.Equals("127.0.0.1", StringComparison.Ordinal) ||
+            host.Equals("::1", StringComparison.Ordinal) ||
+            (IPAddress.TryParse(host, out var address) && IPAddress.IsLoopback(address));
+
+        if (!isLoopback && uri.Scheme != Uri.UriSchemeHttps)
+        {
+            throw new InvalidOperationException(
+                "La URL del asistente debe ser HTTPS o apuntar a localhost " +
+                "(localhost, 127.0.0.1 o ::1). No se pueden enviar datos de la " +
+                "aplicación a un host arbitrario sin cifrar.");
+        }
     }
 
     public async Task<string> AskAsync(string question, CancellationToken cancellationToken = default)
@@ -49,13 +100,13 @@ public sealed class ChatService
             _history.Add(("assistant", answer));
             return answer;
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException)
         {
-            return ex.Message;
+            return GenericErrorMessage;
         }
         catch (JsonException)
         {
-            return "Ollama devolvió una respuesta inesperada.";
+            return GenericErrorMessage;
         }
         catch (TaskCanceledException)
         {
@@ -74,13 +125,13 @@ public sealed class ChatService
             _history.Add(("assistant", answer));
             return answer;
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException)
         {
-            return ex.Message;
+            return GenericErrorMessage;
         }
         catch (JsonException)
         {
-            return "Ollama devolvió una respuesta inesperada.";
+            return GenericErrorMessage;
         }
         catch (TaskCanceledException)
         {
@@ -165,7 +216,7 @@ public sealed class ChatService
             var reply = await PostChatAsync(messages, !summary, cancellationToken);
             if (reply.ToolCalls is null)
             {
-                return ValidateAnswer(reply.Content, facts);
+                return TruncateAnswer(ValidateAnswer(reply.Content, facts));
             }
 
             messages.Add(new
@@ -203,7 +254,7 @@ public sealed class ChatService
         try
         {
             response = await _httpClient.PostAsJsonAsync(
-                "api/chat",
+                _chatEndpoint,
                 new
                 {
                     model = _model,
@@ -367,6 +418,14 @@ public sealed class ChatService
             ? "Eres el asistente de Fiadex. Genera un resumen breve en español usando solo los datos proporcionados. No calcules cifras nuevas, no inventes datos y no modifiques registros. Si falta información, indícalo claramente."
             : "Eres el asistente de Fiadex. Solo puedes consultar los datos proporcionados o los obtenidos con las herramientas de solo lectura. No calcules cifras que no estén en los datos, no inventes nombres ni registres cambios. Responde brevemente en español. Si la información no existe, indícalo claramente.")
         + Environment.NewLine + "Datos de solo lectura:" + Environment.NewLine + facts;
+
+    private static string TruncateAnswer(string answer)
+    {
+        const string suffix = "\n\n[Respuesta truncada por longitud.]";
+        return answer.Length <= MaxAnswerLength
+            ? answer
+            : answer[..(MaxAnswerLength - suffix.Length)] + suffix;
+    }
 
     private static string ValidateAnswer(string answer, string facts)
     {

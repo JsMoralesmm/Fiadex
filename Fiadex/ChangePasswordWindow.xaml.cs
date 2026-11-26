@@ -29,8 +29,11 @@ public partial class ChangePasswordWindow : Window
                 _username,
                 CurrentPasswordField.Password,
                 NewPasswordField.Password);
-            MessageBox.Show("Contraseña actualizada.", "Fiadex",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            ModalDialogWindow.ShowInfo(
+                this,
+                "Contraseña actualizada",
+                "Su clave de acceso se actualizó correctamente.",
+                "Aceptar");
             Close();
         }
         catch (Exception exception)

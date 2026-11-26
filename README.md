@@ -2,23 +2,16 @@
 
 Aplicación de escritorio para Windows que registra préstamos personales y abonos, calcula saldos pendientes y consulta el historial de pagos. Funciona sin conexión y guarda los datos en SQLite dentro de `%LocalAppData%\Fiadex\fiadex.db`.
 
+## Descarga
+
+- **Portable Windows x64**: [última release](https://github.com/JsMoralesmm/Fiadex/releases/latest) → `Fiadex-win-x64-portable.zip`.
+- SHA-256 de `Fiadex.dll` incluido: `E453E56A1337D565B084B44B832339256AB836B4F8534027772FA1690768EBEE`.
+
 ## Documentación
 
-Manuales disponibles en **Markdown** y **PDF**:
-
-| Manual | Markdown | PDF |
-|---|---|---|
-| Usuario | [MANUAL_USUARIO.md](MANUAL_USUARIO.md) | [MANUAL_USUARIO.pdf](Manuales_PDF/MANUAL_USUARIO.pdf) |
-| Técnico | [MANUAL_TECNICO.md](MANUAL_TECNICO.md) | [MANUAL_TECNICO.pdf](Manuales_PDF/MANUAL_TECNICO.pdf) |
-| Despliegue | [MANUAL_DESPLIEGUE.md](MANUAL_DESPLIEGUE.md) | [MANUAL_DESPLIEGUE.pdf](Manuales_PDF/MANUAL_DESPLIEGUE.pdf) |
-
-También puedes consultar [SKILLS.md](SKILLS.md) (especificación técnica original).
-
-## Descarga portable (Release)
-
-- **[Fiadex-win-x64-portable.zip](releases/Fiadex-win-x64-portable.zip)** — Windows x64, autocontenido, sin instalador ni runtime de .NET. Incluye los tres manuales en PDF dentro de la carpeta `Manuales\`.
-- Extrae el ZIP en una carpeta propia y ejecuta `Fiadex.exe`. La base de datos se crea en `%LocalAppData%\Fiadex\fiadex.db`.
-- SHA-256 de `Fiadex.dll`: `8E20FB8836C348DC5277313E62660A45131EAF72C3B848C5A79772F17F8D1504`.
+- [Manual de Usuario](MANUAL_USUARIO.md)
+- [Manual Técnico](MANUAL_TECNICO.md)
+- [Manual de Despliegue](MANUAL_DESPLIEGUE.md)
 
 ## Requisitos
 
@@ -33,7 +26,7 @@ dotnet test Fiadex.slnx
 dotnet run --project Fiadex\Fiadex.csproj
 ```
 
-Al primer inicio se crea la cuenta administradora desde la propia pantalla de acceso. Las contraseñas se almacenan con PBKDF2 (SHA-256, 100 000 iteraciones y sal aleatoria); no se guardan credenciales en el repositorio (`usuarios.txt` está ignorado por Git).
+Al primer inicio se crea la cuenta administradora desde la propia pantalla de acceso. Las contraseñas nuevas se almacenan con PBKDF2 (SHA-256, 600 000 iteraciones, prefijo `F2$` y sal aleatoria); los hashes antiguos de 100 000 iteraciones se migran al primer inicio de sesión correcto. No se guardan credenciales en el repositorio (`usuarios.txt` está ignorado por Git).
 
 ## Publicación portable
 

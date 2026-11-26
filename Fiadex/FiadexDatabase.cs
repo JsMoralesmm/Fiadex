@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -46,7 +47,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             CREATE TABLE IF NOT EXISTS Loans (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 PersonId INTEGER NOT NULL,
-                AmountCents INTEGER NOT NULl CHECK (AmountCents >= 0),
+                AmountCents INTEGER NOT NULL CHECK (AmountCents >= 0),
                 LoanDate TEXT NOT NULL,
                 Notes TEXT NOT NULL DEFAULT '',
                 FOREIGN KEY (PersonId) REFERENCES Persons(Id)
@@ -216,7 +217,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 Id = reader.GetInt64(0),
                 Name = reader.GetString(1),
                 Phone = reader.GetString(2),
-                CreatedAt = DateTime.Parse(reader.GetString(3))
+                CreatedAt = DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)
             });
         }
 
@@ -225,7 +226,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
 
     public long AddPerson(string name, string phone)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        DomainRules.ValidateRequiredText(name, "nombre de la persona");
 
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();
@@ -236,7 +237,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             """;
         command.Parameters.AddWithValue("$name", name.Trim());
         command.Parameters.AddWithValue("$phone", phone?.Trim() ?? string.Empty);
-        command.Parameters.AddWithValue("$createdAt", DateTime.UtcNow.ToString("O"));
+        command.Parameters.AddWithValue("$createdAt", DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture));
         var id = (long)command.ExecuteScalar()!;
         RefreshAggregates();
         return id;
@@ -244,7 +245,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
 
     public void UpdatePerson(long personId, string name, string phone)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        DomainRules.ValidateRequiredText(name, "nombre de la persona");
 
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();
@@ -291,53 +292,29 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             person.ExecuteNonQuery();
         }
 
+        RefreshAggregates(connection);
         transaction.Commit();
-        RefreshAggregates();
     }
 
-    private static void ValidateLoanDate(DateTime loanDate)
+    private static DateTime? GetEarliestPaymentDate(
+        SqliteConnection connection,
+        SqliteTransaction? transaction,
+        long loanId)
     {
-        if (loanDate.Date > DateTime.Today)
-        {
-            throw new ArgumentOutOfRangeException(nameof(loanDate), "La fecha del préstamo no puede ser futura.");
-        }
-    }
-
-    private static void ValidatePaymentDate(DateTime paymentDate, DateTime loanDate)
-    {
-        if (paymentDate.Date > DateTime.Today)
-        {
-            throw new ArgumentOutOfRangeException(nameof(paymentDate), "La fecha del abono no puede ser futura.");
-        }
-
-        if (paymentDate.Date < loanDate.Date)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(paymentDate),
-                $"La fecha del abono no puede ser anterior a la fecha del préstamo ({loanDate:dd/MM/yyyy}).");
-        }
-    }
-
-    private DateTime? GetEarliestPaymentDate(long loanId)
-    {
-        using var connection = OpenConnection();
         using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = "SELECT MIN(PaymentDate) FROM Payments WHERE LoanId = $loanId";
         command.Parameters.AddWithValue("$loanId", loanId);
         var value = command.ExecuteScalar();
         return value is null || value is DBNull
             ? null
-            : DateTime.Parse(value.ToString()!);
+            : DateTime.Parse(value.ToString()!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
     }
 
     public long AddLoan(long personId, decimal amount, DateTime loanDate, string notes)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(amount), "El monto debe ser mayor que cero.");
-        }
-
-        ValidateLoanDate(loanDate);
+        DomainRules.ValidateAmount(amount, "monto del préstamo");
+        DomainRules.ValidateLoanDate(loanDate);
 
         var trimmedNotes = notes?.Trim() ?? string.Empty;
         var entry = $"Préstamo adicional de {amount:C0} registrado el {loanDate:dd/MM/yyyy}";
@@ -373,7 +350,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 """;
             insert.Parameters.AddWithValue("$personId", personId);
             insert.Parameters.AddWithValue("$amountCents", ToCents(amount));
-            insert.Parameters.AddWithValue("$loanDate", loanDate.ToString("O"));
+            insert.Parameters.AddWithValue("$loanDate", loanDate.ToString("O", CultureInfo.InvariantCulture));
             insert.Parameters.AddWithValue("$notes", trimmedNotes);
             loanId = (long)insert.ExecuteScalar()!;
         }
@@ -400,42 +377,41 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 WHERE Id = $loanId
                 """;
             update.Parameters.AddWithValue("$amountCents", ToCents(amount));
-            update.Parameters.AddWithValue("$loanDate", loanDate.ToString("O"));
+            update.Parameters.AddWithValue("$loanDate", loanDate.ToString("O", CultureInfo.InvariantCulture));
             update.Parameters.AddWithValue("$notes", string.Join(" | ", combined));
             update.Parameters.AddWithValue("$loanId", loanId);
             update.ExecuteNonQuery();
         }
 
+        RefreshAggregates(connection);
         transaction.Commit();
-        RefreshAggregates();
         return loanId;
     }
 
     public void UpdateLoan(long loanId, long personId, decimal amount, DateTime loanDate, string notes)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(amount), "El monto debe ser mayor que cero.");
-        }
+        DomainRules.ValidateAmount(amount, "monto del préstamo");
+        DomainRules.ValidateLoanDate(loanDate);
 
-        ValidateLoanDate(loanDate);
+        using var connection = OpenConnection();
+        using var transaction = connection.BeginTransaction();
 
-        var summary = GetLoanSummary(loanId);
+        var summary = ReadLoanSummary(connection, transaction, loanId);
         if (amount < summary.Paid)
         {
             throw new InvalidOperationException(
                 $"El monto no puede ser menor que los abonos registrados ({summary.Paid:C0}).");
         }
 
-        var earliestPaymentDate = GetEarliestPaymentDate(loanId);
+        var earliestPaymentDate = GetEarliestPaymentDate(connection, transaction, loanId);
         if (earliestPaymentDate.HasValue && loanDate.Date > earliestPaymentDate.Value.Date)
         {
             throw new InvalidOperationException(
                 $"La fecha del préstamo no puede ser posterior al abono más antiguo ({earliestPaymentDate.Value:dd/MM/yyyy}).");
         }
 
-        using var connection = OpenConnection();
         using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             UPDATE Loans
             SET PersonId = $personId, AmountCents = $amountCents,
@@ -444,11 +420,12 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             """;
         command.Parameters.AddWithValue("$personId", personId);
         command.Parameters.AddWithValue("$amountCents", ToCents(amount));
-        command.Parameters.AddWithValue("$loanDate", loanDate.ToString("O"));
+        command.Parameters.AddWithValue("$loanDate", loanDate.ToString("O", CultureInfo.InvariantCulture));
         command.Parameters.AddWithValue("$notes", notes?.Trim() ?? string.Empty);
         command.Parameters.AddWithValue("$loanId", loanId);
         command.ExecuteNonQuery();
-        RefreshAggregates();
+        RefreshAggregates(connection);
+        transaction.Commit();
     }
 
     public void DeleteLoan(long loanId)
@@ -472,19 +449,19 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             loans.ExecuteNonQuery();
         }
 
+        RefreshAggregates(connection);
         transaction.Commit();
-        RefreshAggregates();
     }
 
     public long AddPayment(long loanId, decimal amount, DateTime paymentDate, string notes)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(amount), "El abono debe ser mayor que cero.");
-        }
+        DomainRules.ValidateAmount(amount, "abono");
 
-        var summary = GetLoanSummary(loanId);
-        ValidatePaymentDate(paymentDate, summary.Loan.LoanDate);
+        using var connection = OpenConnection();
+        using var transaction = connection.BeginTransaction();
+
+        var summary = ReadLoanSummary(connection, transaction, loanId);
+        DomainRules.ValidatePaymentDate(summary.Loan.LoanDate, paymentDate);
 
         var balance = summary.Balance;
         if (amount > balance)
@@ -492,8 +469,8 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             throw new InvalidOperationException($"El abono excede el saldo pendiente de {balance:C0}.");
         }
 
-        using var connection = OpenConnection();
         using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             INSERT INTO Payments (LoanId, AmountCents, PaymentDate, Notes)
             VALUES ($loanId, $amountCents, $paymentDate, $notes);
@@ -501,22 +478,23 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             """;
         command.Parameters.AddWithValue("$loanId", loanId);
         command.Parameters.AddWithValue("$amountCents", ToCents(amount));
-        command.Parameters.AddWithValue("$paymentDate", paymentDate.ToString("O"));
+        command.Parameters.AddWithValue("$paymentDate", paymentDate.ToString("O", CultureInfo.InvariantCulture));
         command.Parameters.AddWithValue("$notes", notes?.Trim() ?? string.Empty);
         var id = (long)command.ExecuteScalar()!;
-        RefreshAggregates();
+        RefreshAggregates(connection);
+        transaction.Commit();
         return id;
     }
 
     public void UpdatePayment(long paymentId, long loanId, decimal amount, DateTime paymentDate, string notes)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(amount), "El abono debe ser mayor que cero.");
-        }
+        DomainRules.ValidateAmount(amount, "abono");
 
         using var connection = OpenConnection();
+        using var transaction = connection.BeginTransaction();
+
         using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             SELECT AmountCents
             FROM Payments
@@ -525,8 +503,8 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
         command.Parameters.AddWithValue("$paymentId", paymentId);
         var oldCents = (long)(command.ExecuteScalar() ?? throw new InvalidOperationException("Abono no encontrado."));
 
-        var summary = GetLoanSummary(loanId);
-        ValidatePaymentDate(paymentDate, summary.Loan.LoanDate);
+        var summary = ReadLoanSummary(connection, transaction, loanId);
+        DomainRules.ValidatePaymentDate(summary.Loan.LoanDate, paymentDate);
 
         var paidWithoutCurrent = summary.Paid - FromCents(oldCents);
         if (amount > summary.Loan.Amount - paidWithoutCurrent)
@@ -536,6 +514,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
         }
 
         using var update = connection.CreateCommand();
+        update.Transaction = transaction;
         update.CommandText = """
             UPDATE Payments
             SET LoanId = $loanId, AmountCents = $amountCents,
@@ -544,11 +523,12 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
             """;
         update.Parameters.AddWithValue("$loanId", loanId);
         update.Parameters.AddWithValue("$amountCents", ToCents(amount));
-        update.Parameters.AddWithValue("$paymentDate", paymentDate.ToString("O"));
+        update.Parameters.AddWithValue("$paymentDate", paymentDate.ToString("O", CultureInfo.InvariantCulture));
         update.Parameters.AddWithValue("$notes", notes?.Trim() ?? string.Empty);
         update.Parameters.AddWithValue("$paymentId", paymentId);
         update.ExecuteNonQuery();
-        RefreshAggregates();
+        RefreshAggregates(connection);
+        transaction.Commit();
     }
 
     public void DeletePayment(long paymentId)
@@ -584,7 +564,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 PersonId = reader.GetInt64(1),
                 PersonName = reader.GetString(2),
                 Amount = FromCents(reader.GetInt64(3)),
-                LoanDate = DateTime.Parse(reader.GetString(4)),
+                LoanDate = DateTime.Parse(reader.GetString(4), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 Notes = reader.GetString(5)
             };
             result.Add(new LoanSummary
@@ -599,7 +579,46 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
 
     public LoanSummary GetLoanSummary(long loanId)
     {
-        return GetLoans().Single(x => x.Loan.Id == loanId);
+        using var connection = OpenConnection();
+        return ReadLoanSummary(connection, null, loanId);
+    }
+
+    private static LoanSummary ReadLoanSummary(
+        SqliteConnection connection,
+        SqliteTransaction? transaction,
+        long loanId)
+    {
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT l.Id, l.PersonId, p.Name, l.AmountCents, l.LoanDate, l.Notes,
+                   COALESCE(agg.PaidCents, 0)
+            FROM Loans l
+            JOIN Persons p ON p.Id = l.PersonId
+            LEFT JOIN LoanAggregates agg ON agg.LoanId = l.Id
+            WHERE l.Id = $id
+            """;
+        command.Parameters.AddWithValue("$id", loanId);
+
+        using var reader = command.ExecuteReader();
+        if (!reader.Read())
+        {
+            throw new InvalidOperationException($"No se encontró el préstamo {loanId}.");
+        }
+
+        return new LoanSummary
+        {
+            Loan = new Loan
+            {
+                Id = reader.GetInt64(0),
+                PersonId = reader.GetInt64(1),
+                PersonName = reader.GetString(2),
+                Amount = FromCents(reader.GetInt64(3)),
+                LoanDate = DateTime.Parse(reader.GetString(4), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
+                Notes = reader.GetString(5)
+            },
+            Paid = FromCents(reader.GetInt64(6))
+        };
     }
 
     public List<Payment> GetPayments(long? loanId = null)
@@ -625,7 +644,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 Id = reader.GetInt64(0),
                 LoanId = reader.GetInt64(1),
                 Amount = FromCents(reader.GetInt64(2)),
-                PaymentDate = DateTime.Parse(reader.GetString(3)),
+                PaymentDate = DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 Notes = reader.GetString(4)
             });
         }
@@ -690,7 +709,7 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
                 Id = reader.GetInt64(0),
                 LoanId = reader.GetInt64(1),
                 Amount = FromCents(reader.GetInt64(2)),
-                PaymentDate = DateTime.Parse(reader.GetString(3)),
+                PaymentDate = DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 Notes = reader.GetString(4)
             });
         }
@@ -702,6 +721,12 @@ public sealed partial class FiadexDatabase : IFiadexDatabase
     {
         var connection = new SqliteConnection(_connectionString);
         connection.Open();
+
+        // Las claves foráneas solo se aplican si se activan en cada conexión.
+        using var foreignKeys = connection.CreateCommand();
+        foreignKeys.CommandText = "PRAGMA foreign_keys = ON;";
+        foreignKeys.ExecuteNonQuery();
+
         return connection;
     }
 

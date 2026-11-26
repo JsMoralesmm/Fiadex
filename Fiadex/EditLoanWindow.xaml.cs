@@ -38,11 +38,8 @@ public partial class EditLoanWindow : Window
             }
 
             var loanDate = DateBox.SelectedDate.Value.Date;
-            if (loanDate > DateTime.Today)
-            {
-                Message.Text = "La fecha del préstamo no puede ser futura.";
-                return;
-            }
+            DomainRules.ValidateAmount(amount, "monto del préstamo");
+            DomainRules.ValidateLoanDate(loanDate);
 
             if (_earliestPaymentDate.HasValue && loanDate > _earliestPaymentDate.Value)
             {
