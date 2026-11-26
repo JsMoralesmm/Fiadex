@@ -27,7 +27,7 @@ Características del ZIP actual:
 - No incluye archivos `.pdb` de depuración.
 - Ejecutable principal: `Fiadex.exe`.
 - Ensamblado de la aplicación: `Fiadex.dll`.
-- SHA-256 de `Fiadex.dll`: `E453E56A1337D565B084B44B832339256AB836B4F8534027772FA1690768EBEE`.
+- SHA-256 de `Fiadex.dll`: `22F6F975F48A4FBD2D93DEE44E4E0CB1D38FC79E6D5A75BF5F3A6E52CD3B301B`.
 
 > El hash cambiará cada vez que se modifique el código. Vuelve a calcularlo tras cada publicación.
 

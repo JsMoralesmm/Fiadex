@@ -1681,10 +1681,14 @@
         </Popup>
 
         <!-- FLOATING TOAST NOTIFICATIONS (Monocromático, elegante) -->
-        <ItemsControl ItemsSource="{Binding Toasts}"
+        <!-- Se ubican en la columna del contenido (no sobre el menú lateral) y
+             abajo a la derecha para no quedar tapados por los submenús superiores. -->
+        <ItemsControl Grid.Column="1"
+                      ItemsSource="{Binding Toasts}"
                       HorizontalAlignment="Right"
-                      VerticalAlignment="Top"
-                      Margin="0,16,24,0"
+                      VerticalAlignment="Bottom"
+                      Margin="0,0,24,48"
+                      MaxHeight="320"
                       Panel.ZIndex="100"
                       IsHitTestVisible="False"
                       AutomationProperties.Name="Notificaciones">

@@ -5,7 +5,7 @@ Aplicación de escritorio para Windows que registra préstamos personales y abon
 ## Descarga
 
 - **Portable Windows x64**: [última release](https://github.com/JsMoralesmm/Fiadex/releases/latest) → `Fiadex-win-x64-portable.zip`.
-- SHA-256 de `Fiadex.dll` incluido: `E453E56A1337D565B084B44B832339256AB836B4F8534027772FA1690768EBEE`.
+- SHA-256 de `Fiadex.dll` incluido: `22F6F975F48A4FBD2D93DEE44E4E0CB1D38FC79E6D5A75BF5F3A6E52CD3B301B`.
 
 ## Documentación
 
